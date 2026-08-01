@@ -1,0 +1,22 @@
+{
+  "id": "lorawan_uart",
+  "name": "LoRa UART 模块",
+  "description": "UART 通信模块",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "TX",
+      "function": "UART2_RX",
+      "preferred_functions": [
+        "UART2_RX"
+      ]
+    },
+    {
+      "module_pin": "RX",
+      "function": "UART2_TX",
+      "preferred_functions": [
+        "UART2_TX"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "buzzer",
+  "name": "蜂鸣器",
+  "description": "有源或无源蜂鸣器控制信号",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "SIG",
+      "function": "PWM",
+      "preferred_functions": [
+        "PWM"
+      ],
+      "avoid_default_high": true,
+      "note": "无源蜂鸣器建议使用 PWM 引脚"
+    }
+  ]
+}

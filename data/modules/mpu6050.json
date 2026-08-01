@@ -1,0 +1,37 @@
+{
+  "id": "mpu6050",
+  "name": "MPU6050 姿态传感器",
+  "description": "I2C 六轴姿态传感器，可选中断引脚",
+  "voltage": "3.3V",
+  "needs_pullup": true,
+  "requirements": [
+    {
+      "module_pin": "SCL",
+      "function": "I2C1_SCL",
+      "share_bus": true,
+      "bus_key": "i2c1_scl",
+      "preferred_functions": [
+        "I2C1_SCL"
+      ],
+      "note": "与 OLED 共用 I2C 时钟"
+    },
+    {
+      "module_pin": "SDA",
+      "function": "I2C1_SDA",
+      "share_bus": true,
+      "bus_key": "i2c1_sda",
+      "preferred_functions": [
+        "I2C1_SDA"
+      ],
+      "note": "与 OLED 共用 I2C 数据"
+    },
+    {
+      "module_pin": "INT",
+      "function": "EXTI",
+      "preferred_functions": [
+        "EXTI"
+      ],
+      "note": "姿态数据中断输入"
+    }
+  ]
+}

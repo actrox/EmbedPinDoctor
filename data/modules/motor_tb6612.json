@@ -1,0 +1,31 @@
+{
+  "id": "motor_tb6612",
+  "name": "TB6612 电机驱动",
+  "description": "双路直流电机 PWM 和方向控制",
+  "voltage": "3.3V",
+  "voltage_tolerant": true,
+  "requirements": [
+    {
+      "module_pin": "PWMA",
+      "function": "PWM",
+      "preferred_functions": [
+        "PWM"
+      ],
+      "avoid_default_high": true
+    },
+    {
+      "module_pin": "AIN1",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO"
+      ]
+    },
+    {
+      "module_pin": "AIN2",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO"
+      ]
+    }
+  ]
+}

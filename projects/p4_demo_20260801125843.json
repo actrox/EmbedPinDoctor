@@ -1,0 +1,19 @@
+{
+  "id": "p4_demo_20260801125843",
+  "project": "p4_demo",
+  "author": "tester",
+  "summary": "P4 审批",
+  "changes": [
+    {
+      "field": "pin"
+    }
+  ],
+  "status": "approved",
+  "comments": [
+    {
+      "actor": "lead",
+      "comment": "通过",
+      "time": "2026-08-01T12:58:43.830817+00:00"
+    }
+  ]
+}

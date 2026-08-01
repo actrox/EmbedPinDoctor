@@ -1,0 +1,15 @@
+{
+  "id": "relay_module",
+  "name": "继电器模块",
+  "description": "GPIO 控制继电器",
+  "voltage": "5V",
+  "requirements": [
+    {
+      "module_pin": "IN",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO"
+      ]
+    }
+  ]
+}

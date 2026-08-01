@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EmbedPinDoctor</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>EmbedPinDoctor</h1>
+        <p>嵌入式引脚规划与风险检查</p>
+      </div>
+      <div class="actions">
+        <button id="saveBtn">保存项目</button>
+        <button id="exportMdBtn">导出 Markdown</button>
+        <button id="exportPinsBtn">导出 pins.h</button>
+        <button id="exportArduinoBtn">Arduino</button>
+        <button id="exportStm32Btn">STM32 HAL</button>
+        <button id="exportEspBtn">ESP-IDF</button>
+        <button id="exportKicadBtn">KiCad 标签</button>
+      </div>
+    </header>
+
+    <section class="layout">
+      <aside class="panel sidebar">
+        <label>项目名称
+          <input id="projectName" value="demo_project" autocomplete="off">
+        </label>
+        <label>芯片搜索
+          <input id="chipSearch" placeholder="搜索芯片">
+        </label>
+        <label>芯片
+          <select id="chipSelect"></select>
+        </label>
+        <label>项目备注
+          <textarea id="notes" placeholder="记录硬件设计说明"></textarea>
+        </label>
+        <div class="section-title">模块库</div>
+        <input id="moduleSearch" placeholder="搜索模块">
+        <div id="moduleList" class="module-list"></div>
+        <button id="allocateBtn" class="primary">自动分配</button>
+        <div class="section-title">已保存项目</div>
+        <div id="projectList" class="project-list"></div>
+      </aside>
+
+      <section class="panel workarea">
+        <div class="section-title">引脚分配表</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>模块</th>
+                <th>模块引脚</th>
+                <th>芯片引脚</th>
+                <th>功能</th>
+                <th>评分</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody id="allocationBody"></tbody>
+          </table>
+        </div>
+        <button id="recheckBtn">按当前表格重新检查</button>
+      </section>
+
+      <aside class="panel risk-panel">
+        <div class="section-title">风险报告</div>
+        <div id="riskList" class="risk-list"></div>
+        <div class="section-title">导出结果</div>
+        <pre id="statusBox"></pre>
+      </aside>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

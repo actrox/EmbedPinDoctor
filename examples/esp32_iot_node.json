@@ -1,0 +1,11 @@
+{
+  "project_name": "esp32_iot_node",
+  "notes": "ESP32 物联网节点示例",
+  "chip_id": "esp32-wroom-32",
+  "module_ids": [
+    "oled_i2c",
+    "analog_sensor",
+    "lorawan_uart",
+    "ws2812"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "button",
+  "name": "普通按键",
+  "description": "单个 GPIO 按键输入",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "KEY",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "note": "建议配合上拉或下拉电阻"
+    }
+  ]
+}

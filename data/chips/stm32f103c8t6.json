@@ -1,0 +1,314 @@
+{
+  "id": "stm32f103c8t6",
+  "name": "STM32F103C8T6",
+  "voltage": "3.3V",
+  "pins": [
+    {
+      "name": "PA0",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / ADC / 外部中断"
+    },
+    {
+      "name": "PA1",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / ADC / 外部中断"
+    },
+    {
+      "name": "PA2",
+      "functions": [
+        "GPIO",
+        "USART2_TX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USART2 发送"
+    },
+    {
+      "name": "PA3",
+      "functions": [
+        "GPIO",
+        "USART2_RX",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USART2 接收"
+    },
+    {
+      "name": "PA4",
+      "functions": [
+        "GPIO",
+        "SPI1_NSS",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 片选候选"
+    },
+    {
+      "name": "PA5",
+      "functions": [
+        "GPIO",
+        "SPI1_SCK",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 时钟"
+    },
+    {
+      "name": "PA6",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MISO"
+    },
+    {
+      "name": "PA7",
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MOSI"
+    },
+    {
+      "name": "PA8",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "default_high"
+      ],
+      "note": "高级定时器通道，上电状态需确认"
+    },
+    {
+      "name": "PA9",
+      "functions": [
+        "GPIO",
+        "USART1_TX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USART1 发送"
+    },
+    {
+      "name": "PA10",
+      "functions": [
+        "GPIO",
+        "USART1_RX",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USART1 接收"
+    },
+    {
+      "name": "PA13",
+      "functions": [
+        "GPIO",
+        "SWDIO"
+      ],
+      "tags": [
+        "debug"
+      ],
+      "note": "SWD 调试数据线"
+    },
+    {
+      "name": "PA14",
+      "functions": [
+        "GPIO",
+        "SWCLK"
+      ],
+      "tags": [
+        "debug"
+      ],
+      "note": "SWD 调试时钟线"
+    },
+    {
+      "name": "PA15",
+      "functions": [
+        "GPIO",
+        "SPI1_NSS",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "复用调试相关功能，使用前需确认重映射"
+    },
+    {
+      "name": "PB0",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / ADC"
+    },
+    {
+      "name": "PB1",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / ADC"
+    },
+    {
+      "name": "PB2",
+      "functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "BOOT1 相关引脚"
+    },
+    {
+      "name": "PB5",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输出候选"
+    },
+    {
+      "name": "PB6",
+      "functions": [
+        "GPIO",
+        "I2C1_SCL",
+        "USART1_TX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 时钟"
+    },
+    {
+      "name": "PB7",
+      "functions": [
+        "GPIO",
+        "I2C1_SDA",
+        "USART1_RX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 数据"
+    },
+    {
+      "name": "PB8",
+      "functions": [
+        "GPIO",
+        "I2C1_SCL",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 重映射时钟"
+    },
+    {
+      "name": "PB9",
+      "functions": [
+        "GPIO",
+        "I2C1_SDA",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 重映射数据"
+    },
+    {
+      "name": "PB10",
+      "functions": [
+        "GPIO",
+        "USART3_TX",
+        "I2C2_SCL",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C2 / USART3"
+    },
+    {
+      "name": "PB11",
+      "functions": [
+        "GPIO",
+        "USART3_RX",
+        "I2C2_SDA",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C2 / USART3"
+    },
+    {
+      "name": "PB12",
+      "functions": [
+        "GPIO",
+        "SPI2_NSS",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI2 片选候选"
+    },
+    {
+      "name": "PB13",
+      "functions": [
+        "GPIO",
+        "SPI2_SCK",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI2 时钟"
+    },
+    {
+      "name": "PB14",
+      "functions": [
+        "GPIO",
+        "SPI2_MISO",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI2 MISO"
+    },
+    {
+      "name": "PB15",
+      "functions": [
+        "GPIO",
+        "SPI2_MOSI",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI2 MOSI"
+    }
+  ]
+}

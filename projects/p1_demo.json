@@ -1,0 +1,101 @@
+{
+  "project_name": "p1_demo",
+  "chip_id": "stm32f103c8t6",
+  "module_ids": [
+    "oled_i2c",
+    "mpu6050",
+    "button",
+    "buzzer",
+    "sd_card"
+  ],
+  "allocation": [
+    {
+      "module_id": "oled_i2c",
+      "module_name": "OLED I2C 屏幕",
+      "module_pin": "SCL",
+      "chip_pin": "PB6",
+      "function": "I2C1_SCL",
+      "note": "I2C 时钟线"
+    },
+    {
+      "module_id": "oled_i2c",
+      "module_name": "OLED I2C 屏幕",
+      "module_pin": "SDA",
+      "chip_pin": "PB7",
+      "function": "I2C1_SDA",
+      "note": "I2C 数据线"
+    },
+    {
+      "module_id": "mpu6050",
+      "module_name": "MPU6050 姿态传感器",
+      "module_pin": "SCL",
+      "chip_pin": "PB6",
+      "function": "I2C1_SCL",
+      "note": "与 OLED 共用 I2C 时钟"
+    },
+    {
+      "module_id": "mpu6050",
+      "module_name": "MPU6050 姿态传感器",
+      "module_pin": "SDA",
+      "chip_pin": "PB7",
+      "function": "I2C1_SDA",
+      "note": "与 OLED 共用 I2C 数据"
+    },
+    {
+      "module_id": "mpu6050",
+      "module_name": "MPU6050 姿态传感器",
+      "module_pin": "INT",
+      "chip_pin": "PA0",
+      "function": "EXTI",
+      "note": "姿态数据中断输入"
+    },
+    {
+      "module_id": "button",
+      "module_name": "普通按键",
+      "module_pin": "KEY",
+      "chip_pin": "PA1",
+      "function": "GPIO",
+      "note": "建议配合上拉或下拉电阻"
+    },
+    {
+      "module_id": "buzzer",
+      "module_name": "蜂鸣器",
+      "module_pin": "SIG",
+      "chip_pin": "PA2",
+      "function": "PWM",
+      "note": "无源蜂鸣器建议使用 PWM 引脚"
+    },
+    {
+      "module_id": "sd_card",
+      "module_name": "SD 卡模块",
+      "module_pin": "SCK",
+      "chip_pin": "PA5",
+      "function": "SPI1_SCK",
+      "note": "SPI 时钟"
+    },
+    {
+      "module_id": "sd_card",
+      "module_name": "SD 卡模块",
+      "module_pin": "MISO",
+      "chip_pin": "PA6",
+      "function": "SPI1_MISO",
+      "note": "SPI 主入从出"
+    },
+    {
+      "module_id": "sd_card",
+      "module_name": "SD 卡模块",
+      "module_pin": "MOSI",
+      "chip_pin": "PA7",
+      "function": "SPI1_MOSI",
+      "note": "SPI 主出从入"
+    },
+    {
+      "module_id": "sd_card",
+      "module_name": "SD 卡模块",
+      "module_pin": "CS",
+      "chip_pin": "PA3",
+      "function": "GPIO",
+      "note": "片选引脚，多个 SPI 设备不可共用"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "analog_sensor",
+  "name": "模拟量传感器",
+  "description": "0-3.3V ADC 输入传感器",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "OUT",
+      "function": "ADC",
+      "preferred_functions": [
+        "ADC"
+      ]
+    }
+  ]
+}

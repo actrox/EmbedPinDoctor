@@ -1,0 +1,11 @@
+{
+  "project_name": "rp2040_control_panel",
+  "notes": "RP2040 控制面板示例",
+  "chip_id": "rp2040",
+  "module_ids": [
+    "rotary_encoder",
+    "button",
+    "buzzer",
+    "oled_i2c"
+  ]
+}

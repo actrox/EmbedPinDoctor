@@ -1,0 +1,30 @@
+{
+  "id": "rotary_encoder",
+  "name": "旋转编码器",
+  "description": "A/B 相位和按压开关输入",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "A",
+      "function": "EXTI",
+      "preferred_functions": [
+        "EXTI"
+      ]
+    },
+    {
+      "module_pin": "B",
+      "function": "EXTI",
+      "preferred_functions": [
+        "EXTI"
+      ]
+    },
+    {
+      "module_pin": "SW",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO",
+        "EXTI"
+      ]
+    }
+  ]
+}

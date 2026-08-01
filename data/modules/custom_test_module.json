@@ -1,0 +1,11 @@
+{
+  "id": "custom_test_module",
+  "name": "自定义测试模块",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "SIG",
+      "function": "GPIO"
+    }
+  ]
+}

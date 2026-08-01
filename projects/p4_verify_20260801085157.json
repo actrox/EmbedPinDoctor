@@ -1,0 +1,13 @@
+{
+  "id": "p4_verify_20260801085157",
+  "project": "p4_verify",
+  "author": "alice",
+  "summary": "review",
+  "changes": [
+    {
+      "field": "pin"
+    }
+  ],
+  "status": "pending",
+  "comments": []
+}

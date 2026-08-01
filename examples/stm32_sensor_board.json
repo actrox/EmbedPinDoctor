@@ -1,0 +1,12 @@
+{
+  "project_name": "stm32_sensor_board",
+  "notes": "STM32 + OLED + MPU6050 + SD 卡示例",
+  "chip_id": "stm32f103c8t6",
+  "module_ids": [
+    "oled_i2c",
+    "mpu6050",
+    "button",
+    "buzzer",
+    "sd_card"
+  ]
+}

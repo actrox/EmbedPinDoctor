@@ -1,0 +1,17 @@
+{
+  "id": "ws2812",
+  "name": "WS2812 灯带",
+  "description": "单线时序灯带数据输入",
+  "voltage": "5V",
+  "voltage_tolerant": true,
+  "requirements": [
+    {
+      "module_pin": "DIN",
+      "function": "PWM",
+      "preferred_functions": [
+        "PWM"
+      ],
+      "note": "需要确认 3.3V 到 5V 电平转换"
+    }
+  ]
+}

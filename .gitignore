@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.lock.json
+projects/*.events.jsonl
+output/backups/
+output/releases/
+output/*_platformio/
+output/p3_platformio_test/
+output/reverse_sample.h
+output/kicad_labels_sample.txt
+output/*_design_review.md
+*.user
+.env

@@ -1,0 +1,2 @@
+# P5 当前核心运行不依赖第三方 Python 包。
+# 可选打包工具：pyinstaller

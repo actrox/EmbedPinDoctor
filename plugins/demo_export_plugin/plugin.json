@@ -1,0 +1,8 @@
+{
+  "id": "demo_export_plugin",
+  "name": "演示导出插件",
+  "version": "0.1.0",
+  "capabilities": [
+    "export"
+  ]
+}

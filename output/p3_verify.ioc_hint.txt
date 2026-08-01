@@ -1,0 +1,7 @@
+# STM32CubeMX IOC 辅助片段 - STM32F103C8T6
+PB6.Signal=I2C1_SCL
+PB6.Label=oled_i2c_SCL
+PB7.Signal=I2C1_SDA
+PB7.Label=oled_i2c_SDA
+PA0.Signal=GPIO
+PA0.Label=button_KEY

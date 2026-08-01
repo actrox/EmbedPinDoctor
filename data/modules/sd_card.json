@@ -1,0 +1,46 @@
+{
+  "id": "sd_card",
+  "name": "SD 卡模块",
+  "description": "SPI 模式 SD 卡模块",
+  "voltage": "3.3V",
+  "requirements": [
+    {
+      "module_pin": "SCK",
+      "function": "SPI1_SCK",
+      "share_bus": true,
+      "bus_key": "spi1_sck",
+      "preferred_functions": [
+        "SPI1_SCK"
+      ],
+      "note": "SPI 时钟"
+    },
+    {
+      "module_pin": "MISO",
+      "function": "SPI1_MISO",
+      "share_bus": true,
+      "bus_key": "spi1_miso",
+      "preferred_functions": [
+        "SPI1_MISO"
+      ],
+      "note": "SPI 主入从出"
+    },
+    {
+      "module_pin": "MOSI",
+      "function": "SPI1_MOSI",
+      "share_bus": true,
+      "bus_key": "spi1_mosi",
+      "preferred_functions": [
+        "SPI1_MOSI"
+      ],
+      "note": "SPI 主出从入"
+    },
+    {
+      "module_pin": "CS",
+      "function": "GPIO",
+      "preferred_functions": [
+        "GPIO"
+      ],
+      "note": "片选引脚，多个 SPI 设备不可共用"
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "id": "esp32-wroom-32",
+  "name": "ESP32-WROOM-32",
+  "voltage": "3.3V",
+  "pins": [
+    {
+      "name": "GPIO0",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "启动脚"
+    },
+    {
+      "name": "GPIO2",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "启动脚"
+    },
+    {
+      "name": "GPIO4",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO5",
+      "functions": [
+        "GPIO",
+        "SPI1_SCK",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO12",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "启动相关"
+    },
+    {
+      "name": "GPIO13",
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO14",
+      "functions": [
+        "GPIO",
+        "SPI1_SCK",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO15",
+      "functions": [
+        "GPIO",
+        "SPI1_CS",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": ""
+    },
+    {
+      "name": "GPIO16",
+      "functions": [
+        "GPIO",
+        "UART2_RX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO17",
+      "functions": [
+        "GPIO",
+        "UART2_TX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO18",
+      "functions": [
+        "GPIO",
+        "SPI1_SCK",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO19",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO21",
+      "functions": [
+        "GPIO",
+        "I2C1_SDA",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO22",
+      "functions": [
+        "GPIO",
+        "I2C1_SCL",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO23",
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO25",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "DAC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO26",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "DAC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO27",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO32",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO33",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO34",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO35",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO36",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO39",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    }
+  ]
+}
