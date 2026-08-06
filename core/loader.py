@@ -21,6 +21,10 @@ def load_chip(path):
             raise DataLoadError(f"芯片数据缺少字段: {key}")
     if not isinstance(chip["pins"], list) or not chip["pins"]:
         raise DataLoadError("芯片 pins 必须是非空列表")
+    chip.setdefault("data_status", "prototype")
+    chip.setdefault("source", "未填写")
+    chip.setdefault("verified", False)
+    chip.setdefault("confidence", "low")
     return chip
 
 

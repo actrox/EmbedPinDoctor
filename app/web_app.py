@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.loader import load_chip, load_modules
-from core.allocator import allocate_project
+from core.allocator import allocate_project, allocate_alternatives
 from core.checker import check_project
 from export.markdown import render_markdown
 from export.pins import render_pins_header
@@ -184,7 +184,8 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
             if self.path == "/api/allocate":
                 chip, modules, allocation, risks = build_project(payload)
                 risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
-                self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks})
+                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3))) if payload.get("include_alternatives", False) else []
+                self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives})
             elif self.path == "/api/save":
                 path = save_project(payload)
                 self._send_json({"saved": True, "path": str(path)})

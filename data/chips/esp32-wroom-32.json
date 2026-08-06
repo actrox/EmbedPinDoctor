@@ -271,5 +271,12 @@
       "tags": [],
       "note": ""
     }
-  ]
+  ],
+  "data_status": "prototype",
+  "verified": false,
+  "confidence": "medium",
+  "source": "ESP32-WROOM-32 技术参考资料（待人工复核）",
+  "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf",
+  "verified_at": null,
+  "verified_by": null
 }

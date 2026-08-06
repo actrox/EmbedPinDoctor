@@ -3,77 +3,148 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EmbedPinDoctor</title>
+  <meta name="theme-color" content="#f6f5f0">
+  <title>引脚医生 · EmbedPinDoctor</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main class="shell">
+  <div class="app-shell">
     <header class="topbar">
-      <div>
-        <h1>EmbedPinDoctor</h1>
-        <p>嵌入式引脚规划与风险检查</p>
-      </div>
-      <div class="actions">
-        <button id="saveBtn">保存项目</button>
-        <button id="exportMdBtn">导出 Markdown</button>
-        <button id="exportPinsBtn">导出 pins.h</button>
-        <button id="exportArduinoBtn">Arduino</button>
-        <button id="exportStm32Btn">STM32 HAL</button>
-        <button id="exportEspBtn">ESP-IDF</button>
-        <button id="exportKicadBtn">KiCad 标签</button>
+      <a class="brand" href="#" aria-label="引脚医生首页">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>引脚医生</strong><small>EmbedPinDoctor</small></span>
+      </a>
+      <div class="top-actions">
+        <span class="local-badge"><span></span>数据仅在本机处理</span>
+        <button class="button ghost" id="saveBtn">保存项目</button>
+        <button class="button dark" id="exportMdBtn">导出报告 <span aria-hidden="true">↗</span></button>
       </div>
     </header>
 
-    <section class="layout">
-      <aside class="panel sidebar">
-        <label>项目名称
-          <input id="projectName" value="demo_project" autocomplete="off">
-        </label>
-        <label>芯片搜索
-          <input id="chipSearch" placeholder="搜索芯片">
-        </label>
-        <label>芯片
-          <select id="chipSelect"></select>
-        </label>
-        <label>项目备注
-          <textarea id="notes" placeholder="记录硬件设计说明"></textarea>
-        </label>
-        <div class="section-title">模块库</div>
-        <input id="moduleSearch" placeholder="搜索模块">
-        <div id="moduleList" class="module-list"></div>
-        <button id="allocateBtn" class="primary">自动分配</button>
-        <div class="section-title">已保存项目</div>
-        <div id="projectList" class="project-list"></div>
-      </aside>
-
-      <section class="panel workarea">
-        <div class="section-title">引脚分配表</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>模块</th>
-                <th>模块引脚</th>
-                <th>芯片引脚</th>
-                <th>功能</th>
-                <th>评分</th>
-                <th>说明</th>
-              </tr>
-            </thead>
-            <tbody id="allocationBody"></tbody>
-          </table>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">HARDWARE DESIGN CHECKUP</p>
+          <h1>给你的硬件项目<br>做一次<strong>全面体检。</strong></h1>
+          <p class="hero-copy">选择主控与外设，自动检查引脚冲突、电气兼容和启动风险。<br>每个问题都附带清晰、可执行的修复建议。</p>
         </div>
-        <button id="recheckBtn">按当前表格重新检查</button>
+        <div class="hero-meta">
+          <div><strong id="chipCount">—</strong><span>款主控</span></div>
+          <div><strong id="moduleCount">—</strong><span>个模块</span></div>
+          <div><strong>本地</strong><span>离线运行</span></div>
+        </div>
       </section>
 
-      <aside class="panel risk-panel">
-        <div class="section-title">风险报告</div>
-        <div id="riskList" class="risk-list"></div>
-        <div class="section-title">导出结果</div>
-        <pre id="statusBox"></pre>
-      </aside>
-    </section>
-  </main>
+      <section class="workspace">
+        <aside class="setup-card">
+          <div class="card-heading">
+            <div><span class="step">01</span><h2>扫描配置</h2></div>
+            <button class="text-button" id="resetBtn">重置</button>
+          </div>
+
+          <label class="field-label" for="projectName">项目名称</label>
+          <input class="control" id="projectName" value="sensor_board_v1" autocomplete="off">
+
+          <label class="field-label" for="chipSelect">主控芯片</label>
+          <div class="search-wrap">
+            <input class="control search-control" id="chipSearch" placeholder="搜索主控型号…">
+            <span aria-hidden="true">⌕</span>
+          </div>
+          <select class="control" id="chipSelect"></select>
+
+          <div class="field-row">
+            <label class="field-label" for="moduleSearch">项目模块 <span id="selectedCount">已选 0</span></label>
+          </div>
+          <div class="search-wrap">
+            <input class="control search-control" id="moduleSearch" placeholder="搜索传感器、通信或执行模块…">
+            <span aria-hidden="true">⌕</span>
+          </div>
+          <div id="moduleList" class="module-list" aria-label="模块列表"></div>
+
+          <details class="notes-disclosure">
+            <summary>添加项目备注</summary>
+            <textarea class="control" id="notes" placeholder="例如：电池供电、需要保留 SWD 调试口…"></textarea>
+          </details>
+
+          <button id="allocateBtn" class="scan-button"><span class="pulse-dot"></span><span>开始扫描项目</span><span aria-hidden="true">→</span></button>
+          <p class="scan-hint">扫描通常在 1 秒内完成，不会上传任何文件</p>
+
+          <details class="saved-projects">
+            <summary>打开已保存项目</summary>
+            <div id="projectList" class="project-list"></div>
+          </details>
+        </aside>
+
+        <section class="results" aria-live="polite">
+          <div class="result-header">
+            <div><span class="step">02</span><h2>诊断结果</h2></div>
+            <div class="result-tools">
+              <span id="scanTime">等待扫描</span>
+              <button id="recheckBtn" class="icon-button" title="重新检查" aria-label="重新检查">↻</button>
+            </div>
+          </div>
+
+          <div id="emptyState" class="empty-state hidden">
+            <div class="empty-orbit"><span>＋</span></div>
+            <h3>准备为项目做一次体检</h3>
+            <p>完成左侧配置后开始扫描，诊断结果会显示在这里。</p>
+          </div>
+
+          <div id="resultContent">
+            <section class="score-card">
+              <div class="score-ring" id="scoreRing"><div><strong id="healthScore">—</strong><span>/ 100</span></div></div>
+              <div class="score-copy">
+                <p class="eyebrow">PROJECT HEALTH</p>
+                <h3 id="healthTitle">正在准备诊断…</h3>
+                <p id="healthSummary">正在读取当前项目配置。</p>
+              </div>
+              <div class="severity-stats">
+                <div><span class="severity-dot error"></span><strong id="errorCount">0</strong><small>严重问题</small></div>
+                <div><span class="severity-dot warning"></span><strong id="warningCount">0</strong><small>需要注意</small></div>
+                <div><span class="severity-dot tip"></span><strong id="tipCount">0</strong><small>优化建议</small></div>
+              </div>
+            </section>
+
+            <section class="diagnosis-section">
+              <div class="section-heading">
+                <div><h3>发现的问题</h3><span id="issueTotal">0 项</span></div>
+                <div class="filter-group" role="group" aria-label="问题筛选">
+                  <button class="filter active" data-filter="all">全部</button>
+                  <button class="filter" data-filter="错误">严重</button>
+                  <button class="filter" data-filter="警告">注意</button>
+                  <button class="filter" data-filter="提示">建议</button>
+                </div>
+              </div>
+              <div id="riskList" class="risk-list"></div>
+            </section>
+
+            <details class="pin-section">
+              <summary><span><strong>引脚分配详情</strong><small id="allocationSummary">0 条连接</small></span><span>展开查看 ↓</span></summary>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>模块 / 信号</th><th>主控引脚</th><th>功能</th><th>评分</th><th>说明</th></tr></thead>
+                  <tbody id="allocationBody"></tbody>
+                </table>
+              </div>
+            </details>
+
+            <details class="export-section">
+              <summary><span><strong>开发文件导出</strong><small>生成与你的开发环境匹配的引脚定义</small></span><span>展开选项 ↓</span></summary>
+              <div class="export-grid">
+                <button id="exportPinsBtn">pins.h</button><button id="exportArduinoBtn">Arduino</button>
+                <button id="exportStm32Btn">STM32 HAL</button><button id="exportEspBtn">ESP-IDF</button>
+                <button id="exportKicadBtn">KiCad 标签</button>
+              </div>
+            </details>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer><span>引脚医生 · 自用硬件设计辅助工具</span><span id="versionLabel">本地服务</span></footer>
+  </div>
+
+  <div id="toast" class="toast" role="status"><span>✓</span><div><strong id="toastTitle">操作完成</strong><small id="toastText"></small></div></div>
   <script src="/app.js"></script>
 </body>
 </html>
