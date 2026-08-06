@@ -11,3 +11,14 @@ output/kicad_labels_sample.txt
 output/*_design_review.md
 *.user
 .env
+logs/
+dist/
+build/
+.pytest_cache/
+projects/.history/
+projects/*.tmp
+output/diagnostics/
+.ecosystem/
+user_data/
+user_plugins/
+user_rule_packs/

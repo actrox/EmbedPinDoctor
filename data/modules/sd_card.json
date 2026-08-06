@@ -1,12 +1,19 @@
 {
+  "schema_version": 1,
   "id": "sd_card",
   "name": "SD 卡模块",
   "description": "SPI 模式 SD 卡模块",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "SD 卡 SPI 模式通用接口模型",
+  "spi_bus": "SPI1",
+  "spi_mode": 0,
+  "spi_max_hz": 25000000,
   "requirements": [
     {
       "module_pin": "SCK",
       "function": "SPI1_SCK",
+      "direction": "output",
       "share_bus": true,
       "bus_key": "spi1_sck",
       "preferred_functions": [
@@ -17,6 +24,7 @@
     {
       "module_pin": "MISO",
       "function": "SPI1_MISO",
+      "direction": "input",
       "share_bus": true,
       "bus_key": "spi1_miso",
       "preferred_functions": [
@@ -27,6 +35,7 @@
     {
       "module_pin": "MOSI",
       "function": "SPI1_MOSI",
+      "direction": "output",
       "share_bus": true,
       "bus_key": "spi1_mosi",
       "preferred_functions": [
@@ -37,6 +46,7 @@
     {
       "module_pin": "CS",
       "function": "GPIO",
+      "direction": "output",
       "preferred_functions": [
         "GPIO"
       ],

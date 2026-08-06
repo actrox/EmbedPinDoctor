@@ -1,7 +1,12 @@
 {
+  "schema_version": 1,
   "id": "rp2040",
   "name": "Raspberry Pi Pico (RP2040)",
   "voltage": "3.3V",
+  "io_voltage": 3.3,
+  "absolute_max_input_voltage": 3.8,
+  "default_max_output_current_ma": 12,
+  "supports_open_drain": true,
   "pins": [
     {
       "name": "GP0",
@@ -27,6 +32,7 @@
       "name": "GP2",
       "functions": [
         "GPIO",
+        "I2C1_SDA",
         "PWM",
         "EXTI"
       ],
@@ -37,6 +43,7 @@
       "name": "GP3",
       "functions": [
         "GPIO",
+        "I2C1_SCL",
         "PWM",
         "EXTI"
       ],
@@ -47,6 +54,7 @@
       "name": "GP4",
       "functions": [
         "GPIO",
+        "UART_TX",
         "PWM",
         "EXTI"
       ],
@@ -57,6 +65,7 @@
       "name": "GP5",
       "functions": [
         "GPIO",
+        "UART_RX",
         "PWM",
         "EXTI"
       ],
@@ -87,6 +96,7 @@
       "name": "GP8",
       "functions": [
         "GPIO",
+        "SPI1_MISO",
         "PWM",
         "EXTI"
       ],
@@ -107,6 +117,7 @@
       "name": "GP10",
       "functions": [
         "GPIO",
+        "SPI1_SCK",
         "PWM",
         "EXTI"
       ],
@@ -117,6 +128,7 @@
       "name": "GP11",
       "functions": [
         "GPIO",
+        "SPI1_MOSI",
         "PWM",
         "EXTI"
       ],
@@ -308,11 +320,12 @@
       "note": ""
     }
   ],
-  "data_status": "prototype",
+  "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "RP2040 数据手册（待人工复核）",
+  "source": "Raspberry Pi RP2040 Datasheet，章节 1.4、2.19、5.2",
   "datasheet_url": "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf",
+  "machine_checked_at": "2026-08-06",
   "verified_at": null,
   "verified_by": null
 }

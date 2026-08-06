@@ -1,12 +1,16 @@
 {
+  "schema_version": 1,
   "id": "analog_sensor",
   "name": "模拟量传感器",
   "description": "0-3.3V ADC 输入传感器",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "通用 0–3.3V 模拟信号模型",
   "requirements": [
     {
       "module_pin": "OUT",
       "function": "ADC",
+      "direction": "input",
       "preferred_functions": [
         "ADC"
       ]

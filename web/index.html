@@ -15,6 +15,8 @@
         <span><strong>引脚医生</strong><small>EmbedPinDoctor</small></span>
       </a>
       <div class="top-actions">
+        <button class="button ghost" id="undoBtn" title="恢复上一个已保存版本">撤销保存</button>
+        <button class="button ghost" id="redoBtn" title="重新应用撤销的版本">重做保存</button>
         <span class="local-badge"><span></span>数据仅在本机处理</span>
         <button class="button ghost" id="saveBtn">保存项目</button>
         <button class="button dark" id="exportMdBtn">导出报告 <span aria-hidden="true">↗</span></button>
@@ -45,12 +47,22 @@
           <label class="field-label" for="projectName">项目名称</label>
           <input class="control" id="projectName" value="sensor_board_v1" autocomplete="off">
 
+          <label class="field-label" for="projectPath">现有工程目录 <span class="optional-label">可选</span></label>
+          <input class="control mono-control" id="projectPath" placeholder="例如 C:\Projects\sensor-board" autocomplete="off">
+          <p class="field-hint">填写后将只读扫描代码、CubeMX 与 KiCad 文件；留空则按配置规划新项目。</p>
+
           <label class="field-label" for="chipSelect">主控芯片</label>
           <div class="search-wrap">
             <input class="control search-control" id="chipSearch" placeholder="搜索主控型号…">
             <span aria-hidden="true">⌕</span>
           </div>
           <select class="control" id="chipSelect"></select>
+
+          <label class="field-label" for="strategySelect">分配策略</label>
+          <select class="control" id="strategySelect">
+            <option value="recommended">最佳质量 · 优先低风险引脚</option>
+            <option value="min_change">最小变更 · 尽量保持现有接线</option>
+          </select>
 
           <div class="field-row">
             <label class="field-label" for="moduleSearch">项目模块 <span id="selectedCount">已选 0</span></label>
@@ -72,6 +84,13 @@
           <details class="saved-projects">
             <summary>打开已保存项目</summary>
             <div id="projectList" class="project-list"></div>
+          </details>
+          <details class="ecosystem-panel">
+            <summary>扩展包管理</summary>
+            <p class="field-hint">安装经过清单、版本、Schema 与可选 SHA-256 校验的数据包、规则包或插件。</p>
+            <input class="control mono-control" id="ecosystemPath" placeholder="扩展包目录的绝对路径" autocomplete="off">
+            <button class="button dark ecosystem-install" id="ecosystemInstallBtn">校验并安装</button>
+            <div id="ecosystemList" class="ecosystem-list"></div>
           </details>
         </aside>
 
@@ -105,6 +124,19 @@
               </div>
             </section>
 
+            <section id="scanOverview" class="scan-overview hidden">
+              <div class="scan-overview-title"><span class="step">SCAN</span><div><strong id="scanProjectTypes">已识别工程</strong><small id="scanRoot"></small></div></div>
+              <div class="scan-metrics">
+                <div><strong id="scanFileCount">0</strong><span>扫描文件</span></div>
+                <div><strong id="scanPinCount">0</strong><span>引脚引用</span></div>
+                <div><strong id="scanMatchCount">0</strong><span>方案匹配</span></div>
+              </div>
+              <details>
+                <summary>查看扫描到的引脚来源</summary>
+                <div id="scanSourceList" class="scan-source-list"></div>
+              </details>
+            </section>
+
             <section class="diagnosis-section">
               <div class="section-heading">
                 <div><h3>发现的问题</h3><span id="issueTotal">0 项</span></div>
@@ -118,11 +150,16 @@
               <div id="riskList" class="risk-list"></div>
             </section>
 
+            <section id="alternativeSection" class="alternative-section hidden">
+              <div class="section-heading"><div><h3>可行方案</h3><span id="alternativeCount">0 套</span></div><small>选择方案后可继续锁定和复检</small></div>
+              <div id="alternativeList" class="alternative-list"></div>
+            </section>
+
             <details class="pin-section">
               <summary><span><strong>引脚分配详情</strong><small id="allocationSummary">0 条连接</small></span><span>展开查看 ↓</span></summary>
               <div class="table-wrap">
                 <table>
-                  <thead><tr><th>模块 / 信号</th><th>主控引脚</th><th>功能</th><th>评分</th><th>说明</th></tr></thead>
+                  <thead><tr><th>锁定</th><th>模块 / 信号</th><th>主控引脚</th><th>功能</th><th>评分</th><th>选择理由</th></tr></thead>
                   <tbody id="allocationBody"></tbody>
                 </table>
               </div>

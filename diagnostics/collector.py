@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-def create_diagnostics(project_root, output_dir):
+def create_diagnostics(project_root, output_dir, include_project_data=False):
     project_root = Path(project_root)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -22,9 +22,9 @@ def create_diagnostics(project_root, output_dir):
             path = project_root / rel
             if path.exists():
                 zf.write(path, rel)
-        for folder in ["projects", "data/chips", "data/modules"]:
-            base = project_root / folder
+        if include_project_data:
+            base = project_root / "projects"
             if base.exists():
                 for path in base.glob("*.json"):
                     zf.write(path, str(path.relative_to(project_root)))
-    return {"path": str(zip_path), "size": zip_path.stat().st_size}
+    return {"path": str(zip_path), "size": zip_path.stat().st_size, "includes_project_data": include_project_data}

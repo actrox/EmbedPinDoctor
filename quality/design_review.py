@@ -1,17 +1,9 @@
 def build_design_review(chip, modules, allocation, risks):
-    score = 100
-    for risk in risks:
-        if risk["level"] == "错误":
-            score -= 25
-        elif risk["level"] == "警告":
-            score -= 10
-        else:
-            score -= 2
-    score = max(0, score)
+    score = max(0, round(100 - sum(risk.get("weight", 2) for risk in risks)))
     categories = {"电气兼容": [], "调试下载": [], "启动时序": [], "文档一致性": []}
     for risk in risks:
         code = risk.get("code")
-        if code == "voltage_mismatch": categories["电气兼容"].append(risk)
+        if code in {"voltage_mismatch", "input_overvoltage", "drive_current_exceeded", "five_v_tolerance_required", "open_drain_unsupported", "output_on_input_only"}: categories["电气兼容"].append(risk)
         elif code == "debug_pin": categories["调试下载"].append(risk)
         elif code == "boot_pin": categories["启动时序"].append(risk)
         else: categories["文档一致性"].append(risk)

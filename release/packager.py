@@ -11,10 +11,10 @@ def create_release_package(project_root, output_dir, name="EmbedPinDoctor"):
     if release_dir.exists():
         shutil.rmtree(release_dir)
     release_dir.mkdir(parents=True)
-    for folder in ["app", "core", "data", "export", "integrations", "versioning", "plugins", "web", "quality", "collaboration"]:
+    for folder in ["app", "core", "data", "ecosystem", "export", "integrations", "versioning", "plugins", "web", "quality", "collaboration"]:
         src = project_root / folder
         if src.exists():
-            shutil.copytree(src, release_dir / folder)
+            shutil.copytree(src, release_dir / folder, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"))
     for file_name in ["README.md", "策划方案.md"]:
         src = project_root / file_name
         if src.exists():

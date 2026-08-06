@@ -1,11 +1,15 @@
 {
+  "schema_version": 1,
   "id": "custom_test_module",
   "name": "自定义测试模块",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "EmbedPinDoctor 内置测试数据",
   "requirements": [
     {
       "module_pin": "SIG",
-      "function": "GPIO"
+      "function": "GPIO",
+      "direction": "bidirectional"
     }
   ]
 }

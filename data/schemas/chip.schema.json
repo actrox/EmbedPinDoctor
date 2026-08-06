@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://embedpindoctor.local/schema/chip-v1.json",
+  "title": "EmbedPinDoctor Chip Data v1",
+  "type": "object",
+  "required": ["schema_version", "id", "name", "voltage", "io_voltage", "absolute_max_input_voltage", "default_max_output_current_ma", "supports_open_drain", "pins", "data_status", "confidence", "source", "datasheet_url", "verified"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "voltage": {"type": "string", "minLength": 1},
+    "io_voltage": {"type": "number", "exclusiveMinimum": 0},
+    "absolute_max_input_voltage": {"type": "number", "exclusiveMinimum": 0},
+    "default_max_output_current_ma": {"type": "number", "minimum": 0},
+    "supports_open_drain": {"type": "boolean"},
+    "pins": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "functions", "tags"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "functions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "tags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "max_output_current_ma": {"type": "number", "minimum": 0},
+          "absolute_max_input_voltage": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "data_status": {"enum": ["prototype", "review_required", "verified", "deprecated"]},
+    "confidence": {"enum": ["low", "medium", "high"]},
+    "source": {"type": "string", "minLength": 1},
+    "datasheet_url": {"type": "string", "minLength": 1},
+    "verified": {"type": "boolean"}
+  }
+}

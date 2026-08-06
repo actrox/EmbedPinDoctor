@@ -1,5 +1,6 @@
 {
   "id": "demo_update_pack",
+  "type": "data",
   "name": "演示数据更新包",
   "version": "1.0.0"
 }

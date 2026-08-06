@@ -1,13 +1,20 @@
 {
+  "schema_version": 1,
   "id": "oled_i2c",
   "name": "OLED I2C 屏幕",
   "description": "常见 0.96 寸 I2C OLED 显示屏",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "SSD1306 类 3.3V I2C 显示模块通用模型",
   "needs_pullup": true,
+  "i2c_bus": "I2C1",
+  "i2c_address": "0x3C",
   "requirements": [
     {
       "module_pin": "SCL",
       "function": "I2C1_SCL",
+      "direction": "output",
+      "requires_open_drain": true,
       "share_bus": true,
       "bus_key": "i2c1_scl",
       "preferred_functions": [
@@ -18,6 +25,8 @@
     {
       "module_pin": "SDA",
       "function": "I2C1_SDA",
+      "direction": "bidirectional",
+      "requires_open_drain": true,
       "share_bus": true,
       "bus_key": "i2c1_sda",
       "preferred_functions": [

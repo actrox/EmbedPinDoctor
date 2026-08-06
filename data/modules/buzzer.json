@@ -1,12 +1,17 @@
 {
+  "schema_version": 1,
   "id": "buzzer",
   "name": "蜂鸣器",
   "description": "有源或无源蜂鸣器控制信号",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "通用逻辑输入蜂鸣器模型",
   "requirements": [
     {
       "module_pin": "SIG",
       "function": "PWM",
+      "direction": "output",
+      "drive_current_ma": 4,
       "preferred_functions": [
         "PWM"
       ],

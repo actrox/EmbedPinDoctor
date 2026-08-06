@@ -1,13 +1,20 @@
 {
+  "schema_version": 1,
   "id": "mpu6050",
   "name": "MPU6050 姿态传感器",
   "description": "I2C 六轴姿态传感器，可选中断引脚",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "MPU-6050 I2C 接口通用模型",
   "needs_pullup": true,
+  "i2c_bus": "I2C1",
+  "i2c_address": "0x68",
   "requirements": [
     {
       "module_pin": "SCL",
       "function": "I2C1_SCL",
+      "direction": "output",
+      "requires_open_drain": true,
       "share_bus": true,
       "bus_key": "i2c1_scl",
       "preferred_functions": [
@@ -18,6 +25,8 @@
     {
       "module_pin": "SDA",
       "function": "I2C1_SDA",
+      "direction": "bidirectional",
+      "requires_open_drain": true,
       "share_bus": true,
       "bus_key": "i2c1_sda",
       "preferred_functions": [
@@ -28,6 +37,7 @@
     {
       "module_pin": "INT",
       "function": "EXTI",
+      "direction": "input",
       "preferred_functions": [
         "EXTI"
       ],

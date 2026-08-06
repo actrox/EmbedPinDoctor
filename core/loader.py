@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from core.schema import SchemaValidationError, validate_chip, validate_module
+
 
 class DataLoadError(ValueError):
     pass
@@ -15,26 +17,18 @@ def _read_json(path):
 
 def load_chip(path):
     chip = _read_json(Path(path))
-    required = ["id", "name", "voltage", "pins"]
-    for key in required:
-        if key not in chip:
-            raise DataLoadError(f"芯片数据缺少字段: {key}")
-    if not isinstance(chip["pins"], list) or not chip["pins"]:
-        raise DataLoadError("芯片 pins 必须是非空列表")
-    chip.setdefault("data_status", "prototype")
-    chip.setdefault("source", "未填写")
-    chip.setdefault("verified", False)
-    chip.setdefault("confidence", "low")
-    return chip
+    try:
+        return validate_chip(chip)
+    except SchemaValidationError as exc:
+        raise DataLoadError(str(exc)) from exc
 
 
 def load_module(path):
     module = _read_json(Path(path))
-    required = ["id", "name", "voltage", "requirements"]
-    for key in required:
-        if key not in module:
-            raise DataLoadError(f"模块数据缺少字段: {key}")
-    return module
+    try:
+        return validate_module(module)
+    except SchemaValidationError as exc:
+        raise DataLoadError(str(exc)) from exc
 
 
 def load_modules(module_dir, module_ids):

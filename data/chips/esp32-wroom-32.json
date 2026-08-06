@@ -1,7 +1,12 @@
 {
+  "schema_version": 1,
   "id": "esp32-wroom-32",
   "name": "ESP32-WROOM-32",
   "voltage": "3.3V",
+  "io_voltage": 3.3,
+  "absolute_max_input_voltage": 3.6,
+  "default_max_output_current_ma": 12,
+  "supports_open_drain": true,
   "pins": [
     {
       "name": "GPIO0",
@@ -48,8 +53,10 @@
         "PWM",
         "EXTI"
       ],
-      "tags": [],
-      "note": ""
+      "tags": [
+        "boot"
+      ],
+      "note": "启动配置相关脚"
     },
     {
       "name": "GPIO12",
@@ -104,6 +111,7 @@
       "functions": [
         "GPIO",
         "UART2_RX",
+        "UART_RX",
         "PWM",
         "EXTI"
       ],
@@ -115,6 +123,7 @@
       "functions": [
         "GPIO",
         "UART2_TX",
+        "UART_TX",
         "PWM",
         "EXTI"
       ],
@@ -238,8 +247,10 @@
         "ADC",
         "EXTI"
       ],
-      "tags": [],
-      "note": ""
+      "tags": [
+        "input_only"
+      ],
+      "note": "仅支持输入"
     },
     {
       "name": "GPIO35",
@@ -248,8 +259,10 @@
         "ADC",
         "EXTI"
       ],
-      "tags": [],
-      "note": ""
+      "tags": [
+        "input_only"
+      ],
+      "note": "仅支持输入"
     },
     {
       "name": "GPIO36",
@@ -258,8 +271,10 @@
         "ADC",
         "EXTI"
       ],
-      "tags": [],
-      "note": ""
+      "tags": [
+        "input_only"
+      ],
+      "note": "仅支持输入"
     },
     {
       "name": "GPIO39",
@@ -268,15 +283,18 @@
         "ADC",
         "EXTI"
       ],
-      "tags": [],
-      "note": ""
+      "tags": [
+        "input_only"
+      ],
+      "note": "仅支持输入"
     }
   ],
-  "data_status": "prototype",
+  "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "ESP32-WROOM-32 技术参考资料（待人工复核）",
-  "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf",
+  "source": "Espressif ESP32 Series Datasheet v5.2，章节 2.3、3、5.3",
+  "datasheet_url": "https://documentation.espressif.com/esp32_datasheet_en.html",
+  "machine_checked_at": "2026-08-06",
   "verified_at": null,
   "verified_by": null
 }

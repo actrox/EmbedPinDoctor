@@ -1,12 +1,17 @@
 {
+  "schema_version": 1,
   "id": "relay_module",
   "name": "继电器模块",
   "description": "GPIO 控制继电器",
   "voltage": "5V",
+  "logic_voltage": 5.0,
+  "source": "EmbedPinDoctor 演示更新包：通用 5V 继电器模型",
   "requirements": [
     {
       "module_pin": "IN",
       "function": "GPIO",
+      "direction": "output",
+      "drive_current_ma": 4,
       "preferred_functions": [
         "GPIO"
       ]

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://embedpindoctor.local/schema/module-v1.json",
+  "title": "EmbedPinDoctor Module Data v1",
+  "type": "object",
+  "required": ["schema_version", "id", "name", "voltage", "logic_voltage", "source", "requirements"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "voltage": {"type": "string", "minLength": 1},
+    "logic_voltage": {"type": "number", "exclusiveMinimum": 0},
+    "source": {"type": "string", "minLength": 1},
+    "i2c_address": {"type": ["integer", "string"]},
+    "i2c_bus": {"type": "string", "minLength": 1},
+    "spi_mode": {"type": "integer", "minimum": 0, "maximum": 3},
+    "spi_max_hz": {"type": "number", "minimum": 1},
+    "spi_bus": {"type": "string", "minLength": 1},
+    "uart_requires_flow_control": {"type": "boolean"},
+    "requirements": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["module_pin", "function", "direction"],
+        "properties": {
+          "module_pin": {"type": "string", "minLength": 1},
+          "function": {"type": "string", "minLength": 1},
+          "direction": {"enum": ["input", "output", "bidirectional"]},
+          "share_bus": {"type": "boolean"},
+          "bus_key": {"type": "string", "minLength": 1},
+          "drive_current_ma": {"type": "number", "minimum": 0},
+          "requires_open_drain": {"type": "boolean"},
+          "requires_five_v_tolerant": {"type": "boolean"}
+          ,"pwm_frequency_hz": {"type": "number", "minimum": 1}
+        }
+      }
+    }
+  }
+}

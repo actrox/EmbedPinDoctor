@@ -1,13 +1,18 @@
 {
+  "schema_version": 1,
   "id": "ws2812",
   "name": "WS2812 灯带",
   "description": "单线时序灯带数据输入",
   "voltage": "5V",
+  "logic_voltage": 5.0,
+  "source": "WS2812 单线数据输入保守模型",
   "voltage_tolerant": true,
   "requirements": [
     {
       "module_pin": "DIN",
       "function": "PWM",
+      "direction": "output",
+      "drive_current_ma": 1,
       "preferred_functions": [
         "PWM"
       ],

@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -34,8 +35,9 @@ def main():
     assert import_kicad_labels(kicad_file)[0]["label"] == "OLED_SCL"
     changed = compare_allocations(allocation, [{**allocation[0], "chip_pin": "PB5"}] + allocation[1:])
     assert changed
-    update = import_data_package(PROJECT_ROOT / "packages/demo_update_pack", PROJECT_ROOT / "data")
-    assert "relay_module" in update["imported"]["modules"]
+    with TemporaryDirectory() as temp_dir:
+        update = import_data_package(PROJECT_ROOT / "packages/demo_update_pack", Path(temp_dir) / "data")
+        assert "relay_module" in update["imported"]["modules"]
     assert discover_plugins(PROJECT_ROOT / "plugins")
     print("P3 extension test passed")
     print(f"risks={len(risks)} changes={len(changed)} platformio={result['path']}")

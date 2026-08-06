@@ -1,12 +1,16 @@
 {
+  "schema_version": 1,
   "id": "button",
   "name": "普通按键",
   "description": "单个 GPIO 按键输入",
   "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "通用低电平/高电平按键模型",
   "requirements": [
     {
       "module_pin": "KEY",
       "function": "GPIO",
+      "direction": "input",
       "preferred_functions": [
         "GPIO",
         "EXTI"

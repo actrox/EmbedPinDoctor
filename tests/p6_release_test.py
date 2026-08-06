@@ -6,6 +6,7 @@ sys.path.insert(0, str(ROOT))
 
 from diagnostics.collector import create_diagnostics
 from release.build_release import build_release
+from release.validate_release import validate_release
 from app.web_app import build_project
 
 
@@ -24,6 +25,7 @@ def main():
     release_path = Path(release["path"])
     assert release_path.exists()
     assert (release_path / "release_manifest.json").exists()
+    assert validate_release(release_path)["valid"]
     assert (ROOT / "launcher.py").exists()
     print("P6 release test passed")
     print(f"examples={len(examples)} diagnostics={diagnostics['size']} release={release['path']}")

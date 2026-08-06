@@ -1,7 +1,12 @@
 {
+  "schema_version": 1,
   "id": "stm32f103c8t6",
   "name": "STM32F103C8T6",
   "voltage": "3.3V",
+  "io_voltage": 3.3,
+  "absolute_max_input_voltage": 3.6,
+  "default_max_output_current_ma": 8,
+  "supports_open_drain": true,
   "pins": [
     {
       "name": "PA0",
@@ -30,6 +35,7 @@
       "functions": [
         "GPIO",
         "USART2_TX",
+        "UART_TX",
         "PWM",
         "EXTI"
       ],
@@ -41,6 +47,7 @@
       "functions": [
         "GPIO",
         "USART2_RX",
+        "UART_RX",
         "ADC",
         "EXTI"
       ],
@@ -311,11 +318,12 @@
       "note": "SPI2 MOSI"
     }
   ],
-  "data_status": "prototype",
+  "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "STM32F103x8/B 数据手册（待人工复核）",
-  "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32f103c8.pdf",
+  "source": "STMicroelectronics STM32F103x8/B DS5319 Rev 20，表 5、36、37",
+  "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32f103t8.pdf",
+  "machine_checked_at": "2026-08-06",
   "verified_at": null,
   "verified_by": null
 }

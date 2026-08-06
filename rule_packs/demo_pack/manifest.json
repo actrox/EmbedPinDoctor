@@ -1,5 +1,6 @@
 {
   "id": "demo_pack",
+  "type": "rules",
   "name": "演示规则包",
   "version": "1.0.0"
 }

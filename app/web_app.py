@@ -1,15 +1,17 @@
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 import json
+import logging
 import mimetypes
+import os
 import re
 import sys
 from urllib.parse import parse_qs, urlparse
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from core.loader import load_chip, load_modules
+from core.loader import load_chip, load_module, load_modules
 from core.allocator import allocate_project, allocate_alternatives
 from core.checker import check_project
 from export.markdown import render_markdown
@@ -21,6 +23,7 @@ from integrations.code_reverse import reverse_pins_from_code
 from integrations.platformio import generate_platformio_project
 from integrations.ioc_export import render_ioc_hint
 from integrations.kicad_import import import_kicad_labels
+from integrations.project_scanner import scan_project, compare_scan
 from versioning.compare import compare_allocations
 from plugins.registry import discover_plugins
 from collaboration.audit_log import append_event, read_events
@@ -32,11 +35,41 @@ from release.packager import create_release_package
 from backup.snapshot import create_backup, restore_backup
 from diagnostics.collector import create_diagnostics
 from release.build_release import build_release
+from core.project_store import ProjectStore
+from ecosystem.package_manager import PackageManager
 
-DATA_DIR = PROJECT_ROOT / "data"
-PROJECTS_DIR = PROJECT_ROOT / "projects"
-OUTPUT_DIR = PROJECT_ROOT / "output"
+USER_ROOT = (Path(os.environ.get("LOCALAPPDATA", Path.home())) / "EmbedPinDoctor") if getattr(sys, "frozen", False) else PROJECT_ROOT
+BUILTIN_DATA_DIR = PROJECT_ROOT / "data"
+DATA_DIR = BUILTIN_DATA_DIR
+USER_DATA_DIR = USER_ROOT / "user_data"
+PROJECTS_DIR = USER_ROOT / "projects"
+OUTPUT_DIR = USER_ROOT / "output"
 WEB_DIR = PROJECT_ROOT / "web"
+PROJECT_STORE = ProjectStore(PROJECTS_DIR)
+logger = logging.getLogger(__name__)
+APP_VERSION = (PROJECT_ROOT / "VERSION").read_text(encoding="utf-8").strip() if (PROJECT_ROOT / "VERSION").exists() else "0.0.0"
+INSTALLED_PLUGIN_DIR = USER_ROOT / "user_plugins"
+INSTALLED_RULE_DIR = USER_ROOT / "user_rule_packs"
+ECOSYSTEM = PackageManager(USER_ROOT / ".ecosystem", USER_DATA_DIR, INSTALLED_RULE_DIR, INSTALLED_PLUGIN_DIR, APP_VERSION)
+
+
+def list_plugins(states=None):
+    plugins = discover_plugins(PROJECT_ROOT / "plugins", states)
+    if INSTALLED_PLUGIN_DIR.resolve() != (PROJECT_ROOT / "plugins").resolve():
+        known = {item["id"] for item in plugins}
+        plugins.extend(item for item in discover_plugins(INSTALLED_PLUGIN_DIR, states) if item["id"] not in known)
+    return plugins
+
+
+def _data_files(kind):
+    files = {path.name: path for path in (DATA_DIR / kind).glob("*.json")}
+    files.update({path.name: path for path in (USER_DATA_DIR / kind).glob("*.json")})
+    return [files[name] for name in sorted(files)]
+
+
+def _data_file(kind, data_id):
+    user_path = USER_DATA_DIR / kind / f"{data_id}.json"
+    return user_path if user_path.exists() else DATA_DIR / kind / f"{data_id}.json"
 
 
 def _safe_name(name):
@@ -47,7 +80,7 @@ def _safe_name(name):
 def list_chips(query=""):
     query = query.lower().strip()
     chips = []
-    for path in sorted((DATA_DIR / "chips").glob("*.json")):
+    for path in _data_files("chips"):
         chip = load_chip(path)
         item = {"id": chip["id"], "name": chip["name"], "voltage": chip.get("voltage", "未知")}
         if not query or query in item["id"].lower() or query in item["name"].lower():
@@ -58,7 +91,7 @@ def list_chips(query=""):
 def list_modules(query=""):
     query = query.lower().strip()
     modules = []
-    for path in sorted((DATA_DIR / "modules").glob("*.json")):
+    for path in _data_files("modules"):
         data = json.loads(path.read_text(encoding="utf-8"))
         item = {
             "id": data["id"],
@@ -81,19 +114,20 @@ def build_project(payload):
     if not module_ids:
         raise ValueError("至少选择一个模块")
 
-    chip = load_chip(DATA_DIR / "chips" / f"{chip_id}.json")
-    modules = load_modules(DATA_DIR / "modules", module_ids)
-    allocation = allocation_override or allocate_project(chip, modules)
+    chip = load_chip(_data_file("chips", chip_id))
+    modules = [load_module(_data_file("modules", module_id)) for module_id in module_ids]
+    allocation = allocation_override or allocate_project(
+        chip, modules,
+        locked_pins=payload.get("locked_pins"),
+        preferred_allocation=payload.get("preferred_allocation"),
+        strategy=payload.get("strategy", "recommended"),
+    )
     risks = check_project(chip, modules, allocation)
     return chip, modules, allocation, risks
 
 
 def save_project(payload):
-    project_name = _safe_name(payload.get("project_name", "untitled_project"))
-    PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
-    path = PROJECTS_DIR / f"{project_name}.json"
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return path
+    return PROJECT_STORE.save(payload)
 
 
 def export_project(payload, kind):
@@ -163,19 +197,33 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
                 self._send_json({"projects": projects})
             elif parsed.path == "/api/project":
                 name = _safe_name(parse_qs(parsed.query).get("name", [""])[0])
-                path = PROJECTS_DIR / f"{name}.json"
-                self._send_json(json.loads(path.read_text(encoding="utf-8")))
+                project, migrations = PROJECT_STORE.load(name)
+                project["_migration"] = migrations
+                project["_history"] = PROJECT_STORE.history(name)
+                self._send_json(project)
+            elif parsed.path == "/api/project/history":
+                name = _safe_name(parse_qs(parsed.query).get("name", [""])[0])
+                self._send_json(PROJECT_STORE.history(name))
             elif parsed.path == "/api/version":
                 version_path = PROJECT_ROOT / "VERSION"
                 self._send_json({"version": version_path.read_text(encoding="utf-8").strip() if version_path.exists() else "unknown"})
+            elif parsed.path == "/api/ecosystem":
+                packages = ECOSYSTEM.list_packages()
+                states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
+                self._send_json({"packages": packages, "plugins": list_plugins(states)})
             elif parsed.path == "/api/examples":
                 examples_dir = PROJECT_ROOT / "examples"
                 items = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(examples_dir.glob("*.json"))] if examples_dir.exists() else []
                 self._send_json({"examples": items})
             else:
                 target = WEB_DIR / "index.html" if parsed.path == "/" else WEB_DIR / parsed.path.lstrip("/")
-                self._send_file(target)
+                resolved = target.resolve()
+                if not resolved.is_relative_to(WEB_DIR.resolve()):
+                    self._send_json({"error": "静态文件路径无效"}, 404)
+                else:
+                    self._send_file(resolved)
         except Exception as exc:
+            logger.exception("GET %s failed", parsed.path)
             self._send_json({"error": str(exc)}, 400)
 
     def do_POST(self):
@@ -184,11 +232,26 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
             if self.path == "/api/allocate":
                 chip, modules, allocation, risks = build_project(payload)
                 risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
-                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3))) if payload.get("include_alternatives", False) else []
+                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
                 self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives})
+            elif self.path == "/api/scan-project":
+                scan = scan_project(payload["project_path"])
+                requested_chip_id = payload.get("chip_id")
+                if scan.get("suggested_chip_id") and payload.get("use_detected_chip", True):
+                    payload["chip_id"] = scan["suggested_chip_id"]
+                chip, modules, allocation, risks = build_project(payload)
+                comparison = compare_scan(scan, chip, allocation)
+                combined_risks = explain_risks(risks + comparison["risks"])
+                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
+                self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})
             elif self.path == "/api/save":
-                path = save_project(payload)
-                self._send_json({"saved": True, "path": str(path)})
+                path, migrations = save_project(payload)
+                self._send_json({"saved": True, "path": str(path), "migrations": migrations, "history": PROJECT_STORE.history(payload.get("project_name", "untitled_project"))})
+            elif self.path in {"/api/project/undo", "/api/project/redo"}:
+                name = payload.get("project_name", "untitled_project")
+                action = PROJECT_STORE.undo if self.path.endswith("undo") else PROJECT_STORE.redo
+                project, migrations = action(name)
+                self._send_json({"project": project, "migrations": migrations, "history": PROJECT_STORE.history(name)})
             elif self.path == "/api/export/markdown":
                 path = export_project(payload, "markdown")
                 self._send_json({"exported": True, "path": str(path)})
@@ -212,16 +275,18 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
                 self._send_json({"exported": True, "path": str(path)})
             elif self.path == "/api/custom/chip":
                 data = payload.get("data", payload)
-                target = DATA_DIR / "chips" / f"{_safe_name(data.get('id', 'custom_chip'))}.json"
+                target = USER_DATA_DIR / "chips" / f"{_safe_name(data.get('id', 'custom_chip'))}.json"
+                target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
                 self._send_json({"saved": True, "path": str(target)})
             elif self.path == "/api/custom/module":
                 data = payload.get("data", payload)
-                target = DATA_DIR / "modules" / f"{_safe_name(data.get('id', 'custom_module'))}.json"
+                target = USER_DATA_DIR / "modules" / f"{_safe_name(data.get('id', 'custom_module'))}.json"
+                target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
                 self._send_json({"saved": True, "path": str(target)})
             elif self.path == "/api/update/package":
-                result = import_data_package(payload["package_dir"], DATA_DIR)
+                result = import_data_package(payload["package_dir"], USER_DATA_DIR)
                 self._send_json(result)
             elif self.path == "/api/reverse/code":
                 pins = reverse_pins_from_code(payload["path"])
@@ -233,8 +298,16 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
                 labels = import_kicad_labels(payload["path"])
                 self._send_json({"labels": labels})
             elif self.path == "/api/plugins":
-                plugins = discover_plugins(PROJECT_ROOT / "plugins")
+                packages = ECOSYSTEM.list_packages()
+                states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
+                plugins = list_plugins(states)
                 self._send_json({"plugins": plugins})
+            elif self.path == "/api/ecosystem/install":
+                self._send_json(ECOSYSTEM.install(payload["package_dir"], bool(payload.get("allow_downgrade", False))))
+            elif self.path == "/api/ecosystem/uninstall":
+                self._send_json(ECOSYSTEM.uninstall(payload["id"]))
+            elif self.path == "/api/ecosystem/enable":
+                self._send_json({"package": ECOSYSTEM.set_enabled(payload["id"], bool(payload.get("enabled", True)))})
             elif self.path == "/api/events":
                 project = payload.get("project_name", "default")
                 self._send_json({"events": read_events(PROJECTS_DIR, project)})
@@ -267,12 +340,13 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
             elif self.path == "/api/backup/restore":
                 self._send_json(restore_backup(payload["backup_path"], PROJECT_ROOT))
             elif self.path == "/api/diagnostics/create":
-                self._send_json(create_diagnostics(PROJECT_ROOT, OUTPUT_DIR / "diagnostics"))
+                self._send_json(create_diagnostics(PROJECT_ROOT, OUTPUT_DIR / "diagnostics", bool(payload.get("include_project_data", False))))
             elif self.path == "/api/release/build_local":
                 self._send_json(build_release())
             else:
                 self._send_json({"error": "未知接口"}, 404)
         except Exception as exc:
+            logger.exception("POST %s failed", self.path)
             self._send_json({"error": str(exc)}, 400)
 
     def log_message(self, fmt, *args):
