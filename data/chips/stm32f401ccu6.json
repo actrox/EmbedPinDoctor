@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "id": "stm32f103c8t6",
-  "name": "STM32F103C8T6",
+  "id": "stm32f401ccu6",
+  "name": "STM32F401CCU6",
   "voltage": "3.3V",
   "io_voltage": 3.3,
-  "absolute_max_input_voltage": 3.6,
-  "default_max_output_current_ma": 8,
+  "absolute_max_input_voltage": 4.0,
+  "default_max_output_current_ma": 25,
   "supports_open_drain": true,
   "pins": [
     {
@@ -45,8 +45,7 @@
       ],
       "tags": [],
       "note": "USART2 发送",
-      "timer": "TIM2",
-      "adc_channel": "IN2"
+      "timer": "TIM2"
     },
     {
       "name": "PA3",
@@ -143,10 +142,36 @@
       "functions": [
         "GPIO",
         "USART1_RX",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "USART1 接收"
+      "note": "USART1 接收",
+      "timer": "TIM1"
+    },
+    {
+      "name": "PA11",
+      "functions": [
+        "GPIO",
+        "USB_DM",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USB D-",
+      "timer": "TIM1"
+    },
+    {
+      "name": "PA12",
+      "functions": [
+        "GPIO",
+        "USB_DP",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "USB D+",
+      "timer": "TIM1"
     },
     {
       "name": "PA13",
@@ -175,10 +200,12 @@
       "functions": [
         "GPIO",
         "SPI1_NSS",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "复用调试相关功能，使用前需确认重映射"
+      "note": "SPI1 片选候选",
+      "timer": "TIM2"
     },
     {
       "name": "PB0",
@@ -218,14 +245,40 @@
       "note": "BOOT1 相关引脚"
     },
     {
-      "name": "PB5",
+      "name": "PB3",
       "functions": [
         "GPIO",
+        "SPI1_SCK",
         "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "通用输出候选"
+      "note": "SPI1 时钟重映射",
+      "timer": "TIM2"
+    },
+    {
+      "name": "PB4",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MISO 重映射",
+      "timer": "TIM3"
+    },
+    {
+      "name": "PB5",
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MOSI 重映射",
+      "timer": "TIM3"
     },
     {
       "name": "PB6",
@@ -287,7 +340,8 @@
         "EXTI"
       ],
       "tags": [],
-      "note": "I2C2 / USART3"
+      "note": "I2C2 / USART3",
+      "timer": "TIM2"
     },
     {
       "name": "PB11",
@@ -295,10 +349,12 @@
         "GPIO",
         "USART3_RX",
         "I2C2_SDA",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "I2C2 / USART3"
+      "note": "I2C2 / USART3",
+      "timer": "TIM2"
     },
     {
       "name": "PB12",
@@ -315,38 +371,71 @@
       "functions": [
         "GPIO",
         "SPI2_SCK",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "SPI2 时钟"
+      "note": "SPI2 时钟",
+      "timer": "TIM1"
     },
     {
       "name": "PB14",
       "functions": [
         "GPIO",
         "SPI2_MISO",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "SPI2 MISO"
+      "note": "SPI2 MISO",
+      "timer": "TIM1"
     },
     {
       "name": "PB15",
       "functions": [
         "GPIO",
         "SPI2_MOSI",
+        "PWM",
         "EXTI"
       ],
       "tags": [],
-      "note": "SPI2 MOSI"
+      "note": "SPI2 MOSI",
+      "timer": "TIM1"
+    },
+    {
+      "name": "PC13",
+      "functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / 外部中断"
+    },
+    {
+      "name": "PC14",
+      "functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / 外部中断"
+    },
+    {
+      "name": "PC15",
+      "functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "通用输入输出 / 外部中断"
     }
   ],
   "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "STMicroelectronics STM32F103x8/B DS5319 Rev 20，表 5、36、37",
-  "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32f103t8.pdf",
-  "machine_checked_at": "2026-08-06",
+  "source": "STMicroelectronics STM32F401xB/C DS10314 Rev 3",
+  "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32f401cb.pdf",
+  "machine_checked_at": "2026-08-11",
   "verified_at": null,
   "verified_by": null
 }

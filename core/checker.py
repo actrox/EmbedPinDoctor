@@ -1,6 +1,17 @@
+import re
 from collections import defaultdict
 
-SHARED_FUNCTIONS = {"I2C1_SCL", "I2C1_SDA", "SPI1_SCK", "SPI1_MISO", "SPI1_MOSI"}
+_BUS_FUNCTION = re.compile(r'^(I2C|SPI|UART|USART)\d*_(SCL|SDA|SCK|MISO|MOSI)$')
+
+
+def _shared_functions(chip):
+    """从芯片引脚数据动态推导可共享的总线信号集合。"""
+    result = set()
+    for pin in chip.get("pins", []):
+        for func in pin.get("functions", []):
+            if _BUS_FUNCTION.match(func):
+                result.add(func)
+    return result
 
 
 def _pin_map(chip):
@@ -30,6 +41,7 @@ def check_project(chip, modules, allocation):
     risks = []
     pins = _pin_map(chip)
     requirements = _requirement_map(modules)
+    shared_funcs = _shared_functions(chip)
     assigned = [item for item in allocation if item["chip_pin"] != "未分配"]
     grouped = defaultdict(list)
     for item in assigned:
@@ -45,7 +57,7 @@ def check_project(chip, modules, allocation):
 
     for pin_name, items in grouped.items():
         functions = {item["function"] for item in items}
-        if len(items) > 1 and not functions.issubset(SHARED_FUNCTIONS):
+        if len(items) > 1 and not functions.issubset(shared_funcs):
             risks.append(_risk("错误", "pin_duplicate", f"{pin_name} 被多个非共享信号占用。", "为其中一个信号重新分配空闲引脚。", {"pin": pin_name}, pin_name))
 
     for item in allocation:

@@ -74,14 +74,20 @@ python app/cli.py --chip stm32f103c8t6 --modules oled_i2c mpu6050 button buzzer 
 
 # 数据审计（检查内置芯片/模块数据完整性）
 python -m quality.data_audit
+
+# 核心算法回归测试
+python -m unittest tests.test_core -v
 ```
 
 ## 内置芯片与模块
 
 ### 支持的主控芯片
 - **STM32F103C8T6**（Cortex-M3，LQFP48）
+- **STM32F401CCU6**（Cortex-M4，UFQFPN48）
 - **ESP32-WROOM-32**（Xtensa LX6 双核，Wi-Fi + BT）
+- **ESP32-S3-WROOM-1**（Xtensa LX7 双核，Wi-Fi + BLE）
 - **RP2040**（Cortex-M0+ 双核，树莓派）
+- **nRF52840**（Cortex-M4，BLE 5.0）
 
 ### 内置模块库
 | 模块 | 类型 | 主要接口 |
@@ -97,6 +103,12 @@ python -m quality.data_audit
 | TB6612 电机驱动 | 驱动 | PWM x2 + IN4 |
 | LoRaWAN UART 模组 | 通信 | UART |
 | 模拟传感器 | 输入 | ADC |
+| DHT22 温湿度传感器 | 传感器 | GPIO（单总线） |
+| DS18B20 温度传感器 | 传感器 | GPIO（1-Wire） |
+| CAN 收发器 | 通信 | CAN |
+| RS485 模块 | 通信 | UART + GPIO |
+| NEO-6M GPS | 定位 | UART |
+| ESP32-CAM 摄像头 | 视觉 | UART |
 | 自定义测试模块 | 示例 | 混合 |
 
 ## 导出格式

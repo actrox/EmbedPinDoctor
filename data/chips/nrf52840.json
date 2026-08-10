@@ -1,361 +1,343 @@
 {
   "schema_version": 1,
-  "id": "rp2040",
-  "name": "Raspberry Pi Pico (RP2040)",
+  "id": "nrf52840",
+  "name": "nRF52840",
   "voltage": "3.3V",
   "io_voltage": 3.3,
-  "absolute_max_input_voltage": 3.8,
-  "default_max_output_current_ma": 12,
+  "absolute_max_input_voltage": 3.6,
+  "default_max_output_current_ma": 14,
   "supports_open_drain": true,
   "pins": [
     {
-      "name": "GP0",
+      "name": "P0.02",
       "functions": [
         "GPIO",
-        "PWM",
+        "ADC",
         "EXTI"
       ],
-      "timer": "PWM0",
       "tags": [],
-      "note": ""
+      "note": "ADC 输入",
+      "adc_channel": "AIN0"
     },
     {
-      "name": "GP1",
+      "name": "P0.03",
       "functions": [
         "GPIO",
-        "PWM",
+        "ADC",
         "EXTI"
       ],
-      "timer": "PWM0",
       "tags": [],
-      "note": ""
+      "note": "ADC 输入",
+      "adc_channel": "AIN1"
     },
     {
-      "name": "GP2",
+      "name": "P0.04",
       "functions": [
         "GPIO",
-        "I2C1_SDA",
-        "PWM",
+        "ADC",
         "EXTI"
       ],
-      "timer": "PWM1",
       "tags": [],
-      "note": ""
+      "note": "ADC 输入",
+      "adc_channel": "AIN2"
     },
     {
-      "name": "GP3",
+      "name": "P0.05",
       "functions": [
         "GPIO",
-        "I2C1_SCL",
-        "PWM",
+        "ADC",
         "EXTI"
       ],
-      "timer": "PWM1",
       "tags": [],
-      "note": ""
+      "note": "ADC 输入",
+      "adc_channel": "AIN3"
     },
     {
-      "name": "GP4",
+      "name": "P0.06",
       "functions": [
         "GPIO",
         "UART_TX",
-        "PWM",
         "EXTI"
       ],
-      "timer": "PWM2",
       "tags": [],
-      "note": ""
+      "note": "UART 发送"
     },
     {
-      "name": "GP5",
+      "name": "P0.08",
       "functions": [
         "GPIO",
         "UART_RX",
-        "PWM",
         "EXTI"
       ],
-      "timer": "PWM2",
       "tags": [],
-      "note": ""
+      "note": "UART 接收"
     },
     {
-      "name": "GP6",
+      "name": "P0.09",
+      "functions": [
+        "GPIO",
+        "NFC1",
+        "EXTI"
+      ],
+      "tags": [
+        "nfc"
+      ],
+      "note": "NFC 天线引脚 1"
+    },
+    {
+      "name": "P0.10",
+      "functions": [
+        "GPIO",
+        "NFC2",
+        "EXTI"
+      ],
+      "tags": [
+        "nfc"
+      ],
+      "note": "NFC 天线引脚 2"
+    },
+    {
+      "name": "P0.11",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM3",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP7",
+      "name": "P0.12",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM3",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP8",
-      "functions": [
-        "GPIO",
-        "SPI1_MISO",
-        "PWM",
-        "EXTI"
-      ],
-      "timer": "PWM4",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GP9",
-      "functions": [
-        "GPIO",
-        "PWM",
-        "EXTI"
-      ],
-      "timer": "PWM4",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GP10",
+      "name": "P0.13",
       "functions": [
         "GPIO",
         "SPI1_SCK",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM5",
       "tags": [],
-      "note": ""
+      "note": "SPI1 时钟"
     },
     {
-      "name": "GP11",
+      "name": "P0.14",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MISO"
+    },
+    {
+      "name": "P0.15",
       "functions": [
         "GPIO",
         "SPI1_MOSI",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM5",
       "tags": [],
-      "note": ""
+      "note": "SPI1 MOSI"
     },
     {
-      "name": "GP12",
+      "name": "P0.16",
+      "functions": [
+        "GPIO",
+        "SPI1_NSS",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 片选"
+    },
+    {
+      "name": "P0.17",
+      "functions": [
+        "GPIO",
+        "I2C1_SDA",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 数据"
+    },
+    {
+      "name": "P0.18",
+      "functions": [
+        "GPIO",
+        "I2C1_SCL",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "I2C1 时钟"
+    },
+    {
+      "name": "P0.19",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM6",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP13",
+      "name": "P0.20",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM6",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP14",
+      "name": "P0.21",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM7",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP15",
+      "name": "P0.22",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM7",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP16",
+      "name": "P0.23",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM0",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP17",
+      "name": "P0.24",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM0",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP18",
+      "name": "P0.25",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM1",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP19",
+      "name": "P0.26",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM1",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP20",
+      "name": "P0.27",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM2",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP21",
+      "name": "P0.28",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM2",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP22",
+      "name": "P0.29",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM3",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP23",
+      "name": "P0.30",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM3",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP24",
+      "name": "P0.31",
       "functions": [
         "GPIO",
         "PWM",
         "EXTI"
       ],
-      "timer": "PWM4",
       "tags": [],
-      "note": ""
+      "note": "通用 PWM"
     },
     {
-      "name": "GP25",
+      "name": "P0.00",
       "functions": [
         "GPIO",
-        "PWM",
         "EXTI"
       ],
-      "timer": "PWM4",
-      "tags": [],
-      "note": ""
+      "tags": [
+        "boot"
+      ],
+      "note": "启动相关引脚"
     },
     {
-      "name": "GP26",
+      "name": "P0.01",
       "functions": [
         "GPIO",
-        "PWM",
-        "EXTI",
-        "ADC"
+        "EXTI"
       ],
-      "adc_channel": "ADC0",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GP27",
-      "functions": [
-        "GPIO",
-        "PWM",
-        "EXTI",
-        "ADC"
+      "tags": [
+        "boot"
       ],
-      "adc_channel": "ADC1",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GP28",
-      "functions": [
-        "GPIO",
-        "PWM",
-        "EXTI",
-        "ADC"
-      ],
-      "adc_channel": "ADC2",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GP29",
-      "functions": [
-        "GPIO",
-        "PWM",
-        "EXTI",
-        "ADC"
-      ],
-      "adc_channel": "ADC3",
-      "tags": [],
-      "note": ""
+      "note": "启动相关引脚"
     }
   ],
   "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "Raspberry Pi RP2040 Datasheet，章节 1.4、2.19、5.2",
-  "datasheet_url": "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf",
-  "machine_checked_at": "2026-08-06",
+  "source": "Nordic nRF52840 Product Specification v1.1",
+  "datasheet_url": "https://infocenter.nordicsemi.com/pdf/nRF52840_PS_v1.1.pdf",
+  "machine_checked_at": "2026-08-11",
   "verified_at": null,
   "verified_by": null
 }

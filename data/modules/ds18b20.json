@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "ds18b20",
+  "name": "DS18B20 温度传感器",
+  "description": "1-Wire 数字温度传感器",
+  "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "Maxim DS18B20 通用模型",
+  "requirements": [
+    {
+      "module_pin": "DATA",
+      "function": "GPIO",
+      "direction": "bidirectional",
+      "preferred_functions": [
+        "GPIO",
+        "EXTI"
+      ],
+      "note": "1-Wire 总线，需要 4.7k 上拉电阻"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "neo6m_gps",
+  "name": "NEO-6M GPS 模块",
+  "description": "UART 通信 GPS 定位模块",
+  "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "u-blox NEO-6 通用模型",
+  "requirements": [
+    {
+      "module_pin": "TX",
+      "function": "UART_TX",
+      "direction": "output",
+      "preferred_functions": [
+        "UART_TX"
+      ],
+      "note": "GPS 数据发送"
+    },
+    {
+      "module_pin": "RX",
+      "function": "UART_RX",
+      "direction": "input",
+      "preferred_functions": [
+        "UART_RX"
+      ],
+      "note": "配置命令接收"
+    }
+  ]
+}

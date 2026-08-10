@@ -1,26 +1,36 @@
 {
   "schema_version": 1,
-  "id": "esp32-wroom-32",
-  "name": "ESP32-WROOM-32",
+  "id": "esp32s3-wroom-1",
+  "name": "ESP32-S3-WROOM-1",
   "voltage": "3.3V",
   "io_voltage": 3.3,
   "absolute_max_input_voltage": 3.6,
-  "default_max_output_current_ma": 12,
+  "default_max_output_current_ma": 20,
   "supports_open_drain": true,
   "pins": [
     {
       "name": "GPIO0",
       "functions": [
         "GPIO",
-        "ADC",
         "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC2_CH1",
       "tags": [
         "boot"
       ],
       "note": "启动脚"
+    },
+    {
+      "name": "GPIO1",
+      "functions": [
+        "GPIO",
+        "ADC",
+        "PWM",
+        "EXTI"
+      ],
+      "adc_channel": "ADC1_CH0",
+      "tags": [],
+      "note": ""
     },
     {
       "name": "GPIO2",
@@ -30,7 +40,17 @@
         "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC2_CH2",
+      "adc_channel": "ADC1_CH1",
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO3",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
       "tags": [
         "boot"
       ],
@@ -44,192 +64,12 @@
         "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC2_CH0",
+      "adc_channel": "ADC1_CH3",
       "tags": [],
       "note": ""
     },
     {
       "name": "GPIO5",
-      "functions": [
-        "GPIO",
-        "SPI1_SCK",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [
-        "boot"
-      ],
-      "note": "启动配置相关脚"
-    },
-    {
-      "name": "GPIO12",
-      "functions": [
-        "GPIO",
-        "SPI1_MISO",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH5",
-      "tags": [
-        "boot"
-      ],
-      "note": "启动相关"
-    },
-    {
-      "name": "GPIO13",
-      "functions": [
-        "GPIO",
-        "SPI1_MOSI",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH4",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO14",
-      "functions": [
-        "GPIO",
-        "SPI1_SCK",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH6",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO15",
-      "functions": [
-        "GPIO",
-        "SPI1_CS",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH3",
-      "tags": [
-        "boot"
-      ],
-      "note": ""
-    },
-    {
-      "name": "GPIO16",
-      "functions": [
-        "GPIO",
-        "UART2_RX",
-        "UART_RX",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO17",
-      "functions": [
-        "GPIO",
-        "UART2_TX",
-        "UART_TX",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO18",
-      "functions": [
-        "GPIO",
-        "SPI1_SCK",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO19",
-      "functions": [
-        "GPIO",
-        "SPI1_MISO",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO21",
-      "functions": [
-        "GPIO",
-        "I2C1_SDA",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO22",
-      "functions": [
-        "GPIO",
-        "I2C1_SCL",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO23",
-      "functions": [
-        "GPIO",
-        "SPI1_MOSI",
-        "PWM",
-        "EXTI"
-      ],
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO25",
-      "functions": [
-        "GPIO",
-        "ADC",
-        "DAC",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH8",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO26",
-      "functions": [
-        "GPIO",
-        "ADC",
-        "DAC",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH9",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO27",
-      "functions": [
-        "GPIO",
-        "ADC",
-        "PWM",
-        "EXTI"
-      ],
-      "adc_channel": "ADC2_CH7",
-      "tags": [],
-      "note": ""
-    },
-    {
-      "name": "GPIO32",
       "functions": [
         "GPIO",
         "ADC",
@@ -241,76 +81,263 @@
       "note": ""
     },
     {
-      "name": "GPIO33",
+      "name": "GPIO6",
       "functions": [
         "GPIO",
-        "ADC",
         "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC1_CH5",
       "tags": [],
       "note": ""
     },
     {
-      "name": "GPIO34",
+      "name": "GPIO7",
       "functions": [
         "GPIO",
-        "ADC",
+        "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC1_CH6",
-      "tags": [
-        "input_only"
-      ],
-      "note": "仅支持输入"
+      "tags": [],
+      "note": ""
     },
     {
-      "name": "GPIO35",
+      "name": "GPIO8",
       "functions": [
         "GPIO",
-        "ADC",
+        "I2C1_SDA",
+        "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC1_CH7",
-      "tags": [
-        "input_only"
-      ],
-      "note": "仅支持输入"
+      "tags": [],
+      "note": "I2C1 数据"
     },
     {
-      "name": "GPIO36",
+      "name": "GPIO9",
       "functions": [
         "GPIO",
-        "ADC",
+        "I2C1_SCL",
+        "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC1_CH0",
-      "tags": [
-        "input_only"
+      "tags": [],
+      "note": "I2C1 时钟"
+    },
+    {
+      "name": "GPIO10",
+      "functions": [
+        "GPIO",
+        "SPI1_SCK",
+        "PWM",
+        "EXTI"
       ],
-      "note": "仅支持输入"
+      "tags": [],
+      "note": "SPI1 时钟"
+    },
+    {
+      "name": "GPIO11",
+      "functions": [
+        "GPIO",
+        "SPI1_MISO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MISO"
+    },
+    {
+      "name": "GPIO12",
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "SPI1 MOSI"
+    },
+    {
+      "name": "GPIO13",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO14",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO15",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO16",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO17",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO18",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO19",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO20",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO21",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO38",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
     },
     {
       "name": "GPIO39",
       "functions": [
         "GPIO",
-        "ADC",
+        "PWM",
         "EXTI"
       ],
-      "adc_channel": "ADC1_CH3",
-      "tags": [
-        "input_only"
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO40",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
       ],
-      "note": "仅支持输入"
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO41",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": ""
+    },
+    {
+      "name": "GPIO43",
+      "functions": [
+        "GPIO",
+        "UART_TX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "UART0 发送"
+    },
+    {
+      "name": "GPIO44",
+      "functions": [
+        "GPIO",
+        "UART_RX",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [],
+      "note": "UART0 接收"
+    },
+    {
+      "name": "GPIO45",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "启动脚"
+    },
+    {
+      "name": "GPIO46",
+      "functions": [
+        "GPIO",
+        "PWM",
+        "EXTI"
+      ],
+      "tags": [
+        "boot"
+      ],
+      "note": "启动脚"
     }
   ],
   "data_status": "review_required",
   "verified": false,
   "confidence": "medium",
-  "source": "Espressif ESP32 Series Datasheet v5.2，章节 2.3、3、5.3",
-  "datasheet_url": "https://documentation.espressif.com/esp32_datasheet_en.html",
-  "machine_checked_at": "2026-08-06",
+  "source": "Espressif ESP32-S3 Datasheet v1.3",
+  "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+  "machine_checked_at": "2026-08-11",
   "verified_at": null,
   "verified_by": null
 }

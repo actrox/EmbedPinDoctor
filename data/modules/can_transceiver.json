@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "can_transceiver",
+  "name": "CAN 收发器模块",
+  "description": "CAN 总线收发器（TJA1050/SN65HVD230 等）",
+  "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "SN65HVD230 通用 CAN 收发器模型",
+  "requirements": [
+    {
+      "module_pin": "CTX",
+      "function": "CAN_TX",
+      "direction": "output",
+      "preferred_functions": [
+        "CAN_TX"
+      ],
+      "note": "CAN 发送"
+    },
+    {
+      "module_pin": "CRX",
+      "function": "CAN_RX",
+      "direction": "input",
+      "preferred_functions": [
+        "CAN_RX"
+      ],
+      "note": "CAN 接收"
+    }
+  ]
+}

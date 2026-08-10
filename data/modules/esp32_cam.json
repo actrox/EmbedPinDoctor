@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "esp32_cam",
+  "name": "ESP32-CAM 摄像头模块",
+  "description": "AI-Thinker ESP32-CAM 摄像头模块，UART 通信",
+  "voltage": "3.3V",
+  "logic_voltage": 3.3,
+  "source": "AI-Thinker ESP32-CAM 通用模型",
+  "requirements": [
+    {
+      "module_pin": "TX",
+      "function": "UART_TX",
+      "direction": "output",
+      "preferred_functions": [
+        "UART_TX"
+      ],
+      "note": "串口数据发送"
+    },
+    {
+      "module_pin": "RX",
+      "function": "UART_RX",
+      "direction": "input",
+      "preferred_functions": [
+        "UART_RX"
+      ],
+      "note": "串口命令接收"
+    }
+  ]
+}

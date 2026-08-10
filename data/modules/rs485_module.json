@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "rs485_module",
+  "name": "RS485 模块",
+  "description": "RS485 收发模块（MAX485 等）",
+  "voltage": "5V",
+  "logic_voltage": 5,
+  "voltage_tolerant": false,
+  "source": "Maxim MAX485 通用模型",
+  "requirements": [
+    {
+      "module_pin": "DI",
+      "function": "UART_TX",
+      "direction": "output",
+      "preferred_functions": [
+        "UART_TX"
+      ],
+      "note": "数据输入"
+    },
+    {
+      "module_pin": "RO",
+      "function": "UART_RX",
+      "direction": "input",
+      "preferred_functions": [
+        "UART_RX"
+      ],
+      "note": "数据输出"
+    },
+    {
+      "module_pin": "DE_RE",
+      "function": "GPIO",
+      "direction": "output",
+      "preferred_functions": [
+        "GPIO"
+      ],
+      "note": "发送/接收使能"
+    }
+  ]
+}

@@ -99,7 +99,7 @@ def list_modules(query=""):
             "voltage": data.get("voltage", "未知"),
             "description": data.get("description", ""),
         }
-        haystack = f"{item["id"]} {item["name"]} {item["description"]}".lower()
+        haystack = f"{item['id']} {item['name']} {item['description']}".lower()
         if not query or query in haystack:
             modules.append(item)
     return modules
@@ -159,6 +159,52 @@ def export_project(payload, kind):
 
 
 class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
+    GET_ROUTES = {
+        "/api/chips": "_get_chips",
+        "/api/modules": "_get_modules",
+        "/api/projects": "_get_projects",
+        "/api/project": "_get_project",
+        "/api/project/history": "_get_project_history",
+        "/api/version": "_get_version",
+        "/api/ecosystem": "_get_ecosystem",
+        "/api/examples": "_get_examples",
+    }
+    POST_ROUTES = {
+        "/api/allocate": "_post_allocate",
+        "/api/scan-project": "_post_scan_project",
+        "/api/save": "_post_save",
+        "/api/project/undo": "_post_undo_redo",
+        "/api/project/redo": "_post_undo_redo",
+        "/api/export/markdown": "_post_export_markdown",
+        "/api/export/pins": "_post_export_pins",
+        "/api/export/platformio": "_post_export_platformio",
+        "/api/export/ioc": "_post_export_ioc",
+        "/api/custom/chip": "_post_custom_chip",
+        "/api/custom/module": "_post_custom_module",
+        "/api/update/package": "_post_update_package",
+        "/api/reverse/code": "_post_reverse_code",
+        "/api/version/compare": "_post_version_compare",
+        "/api/kicad/import": "_post_kicad_import",
+        "/api/plugins": "_post_plugins",
+        "/api/ecosystem/install": "_post_ecosystem_install",
+        "/api/ecosystem/uninstall": "_post_ecosystem_uninstall",
+        "/api/ecosystem/enable": "_post_ecosystem_enable",
+        "/api/events": "_post_events",
+        "/api/lock/acquire": "_post_lock_acquire",
+        "/api/lock/release": "_post_lock_release",
+        "/api/review/create": "_post_review_create",
+        "/api/review/update": "_post_review_update",
+        "/api/design/review": "_post_design_review",
+        "/api/design/review/export": "_post_design_review_export",
+        "/api/rules/list": "_post_rules_list",
+        "/api/rules/import": "_post_rules_import",
+        "/api/release/build": "_post_release_build",
+        "/api/backup/create": "_post_backup_create",
+        "/api/backup/restore": "_post_backup_restore",
+        "/api/diagnostics/create": "_post_diagnostics_create",
+        "/api/release/build_local": "_post_release_build_local",
+    }
+
     def _send_json(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -186,163 +232,41 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        handler_name = self.GET_ROUTES.get(parsed.path)
+        if handler_name:
+            try:
+                getattr(self, handler_name)(parse_qs(parsed.query))
+            except Exception as exc:
+                logger.exception("GET %s failed", parsed.path)
+                self._send_json({"error": str(exc)}, 400)
+        else:
+            self._serve_static(parsed.path)
+
+    def _serve_static(self, path):
+        target = WEB_DIR / "index.html" if path == "/" else WEB_DIR / path.lstrip("/")
+        resolved = target.resolve()
+        if not resolved.is_relative_to(WEB_DIR.resolve()):
+            self._send_json({"error": "静态文件路径无效"}, 404)
+        else:
+            self._serve_file(resolved)
+
+    def _serve_file(self, resolved):
         try:
-            if parsed.path == "/api/chips":
-                self._send_json({"chips": list_chips(parse_qs(parsed.query).get("q", [""])[0])})
-            elif parsed.path == "/api/modules":
-                self._send_json({"modules": list_modules(parse_qs(parsed.query).get("q", [""])[0])})
-            elif parsed.path == "/api/projects":
-                PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
-                projects = [p.stem for p in sorted(PROJECTS_DIR.glob("*.json"))]
-                self._send_json({"projects": projects})
-            elif parsed.path == "/api/project":
-                name = _safe_name(parse_qs(parsed.query).get("name", [""])[0])
-                project, migrations = PROJECT_STORE.load(name)
-                project["_migration"] = migrations
-                project["_history"] = PROJECT_STORE.history(name)
-                self._send_json(project)
-            elif parsed.path == "/api/project/history":
-                name = _safe_name(parse_qs(parsed.query).get("name", [""])[0])
-                self._send_json(PROJECT_STORE.history(name))
-            elif parsed.path == "/api/version":
-                version_path = PROJECT_ROOT / "VERSION"
-                self._send_json({"version": version_path.read_text(encoding="utf-8").strip() if version_path.exists() else "unknown"})
-            elif parsed.path == "/api/ecosystem":
-                packages = ECOSYSTEM.list_packages()
-                states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
-                self._send_json({"packages": packages, "plugins": list_plugins(states)})
-            elif parsed.path == "/api/examples":
-                examples_dir = PROJECT_ROOT / "examples"
-                items = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(examples_dir.glob("*.json"))] if examples_dir.exists() else []
-                self._send_json({"examples": items})
-            else:
-                target = WEB_DIR / "index.html" if parsed.path == "/" else WEB_DIR / parsed.path.lstrip("/")
-                resolved = target.resolve()
-                if not resolved.is_relative_to(WEB_DIR.resolve()):
-                    self._send_json({"error": "静态文件路径无效"}, 404)
-                else:
-                    self._send_file(resolved)
+            self._send_file(resolved)
         except Exception as exc:
-            logger.exception("GET %s failed", parsed.path)
+            logger.exception("GET static failed")
             self._send_json({"error": str(exc)}, 400)
 
     def do_POST(self):
         try:
             payload = self._read_payload()
-            if self.path == "/api/allocate":
-                chip, modules, allocation, risks = build_project(payload)
-                risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
-                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
-                self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives})
-            elif self.path == "/api/scan-project":
-                scan = scan_project(payload["project_path"])
-                requested_chip_id = payload.get("chip_id")
-                if scan.get("suggested_chip_id") and payload.get("use_detected_chip", True):
-                    payload["chip_id"] = scan["suggested_chip_id"]
-                chip, modules, allocation, risks = build_project(payload)
-                comparison = compare_scan(scan, chip, allocation)
-                combined_risks = explain_risks(risks + comparison["risks"])
-                alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
-                self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})
-            elif self.path == "/api/save":
-                path, migrations = save_project(payload)
-                self._send_json({"saved": True, "path": str(path), "migrations": migrations, "history": PROJECT_STORE.history(payload.get("project_name", "untitled_project"))})
-            elif self.path in {"/api/project/undo", "/api/project/redo"}:
-                name = payload.get("project_name", "untitled_project")
-                action = PROJECT_STORE.undo if self.path.endswith("undo") else PROJECT_STORE.redo
-                project, migrations = action(name)
-                self._send_json({"project": project, "migrations": migrations, "history": PROJECT_STORE.history(name)})
-            elif self.path == "/api/export/markdown":
-                path = export_project(payload, "markdown")
-                self._send_json({"exported": True, "path": str(path)})
-            elif self.path == "/api/export/pins":
-                path = export_project(payload, "pins")
-                self._send_json({"exported": True, "path": str(path)})
-            elif self.path == "/api/export/platformio":
-                chip, modules, allocation, risks = build_project(payload)
-                project_name = _safe_name(payload.get("project_name", "platformio_project"))
-                result = generate_platformio_project(OUTPUT_DIR / f"{project_name}_platformio", chip, allocation)
-                self._send_json({"generated": True, **result})
-            elif self.path == "/api/export/ioc":
-                chip, modules, allocation, risks = build_project(payload)
-                project_name = _safe_name(payload.get("project_name", "ioc_hint"))
-                path = OUTPUT_DIR / f"{project_name}.ioc_hint.txt"
-                path.write_text(render_ioc_hint(chip, allocation), encoding="utf-8")
-                self._send_json({"exported": True, "path": str(path)})
+            handler_name = self.POST_ROUTES.get(self.path)
+            if handler_name:
+                getattr(self, handler_name)(payload)
             elif self.path.startswith("/api/export/"):
                 kind = self.path.rsplit("/", 1)[-1]
                 path = export_project(payload, kind)
                 self._send_json({"exported": True, "path": str(path)})
-            elif self.path == "/api/custom/chip":
-                data = payload.get("data", payload)
-                target = USER_DATA_DIR / "chips" / f"{_safe_name(data.get('id', 'custom_chip'))}.json"
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-                self._send_json({"saved": True, "path": str(target)})
-            elif self.path == "/api/custom/module":
-                data = payload.get("data", payload)
-                target = USER_DATA_DIR / "modules" / f"{_safe_name(data.get('id', 'custom_module'))}.json"
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-                self._send_json({"saved": True, "path": str(target)})
-            elif self.path == "/api/update/package":
-                result = import_data_package(payload["package_dir"], USER_DATA_DIR)
-                self._send_json(result)
-            elif self.path == "/api/reverse/code":
-                pins = reverse_pins_from_code(payload["path"])
-                self._send_json({"pins": pins})
-            elif self.path == "/api/version/compare":
-                changes = compare_allocations(payload.get("old_allocation", []), payload.get("new_allocation", []))
-                self._send_json({"changes": changes})
-            elif self.path == "/api/kicad/import":
-                labels = import_kicad_labels(payload["path"])
-                self._send_json({"labels": labels})
-            elif self.path == "/api/plugins":
-                packages = ECOSYSTEM.list_packages()
-                states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
-                plugins = list_plugins(states)
-                self._send_json({"plugins": plugins})
-            elif self.path == "/api/ecosystem/install":
-                self._send_json(ECOSYSTEM.install(payload["package_dir"], bool(payload.get("allow_downgrade", False))))
-            elif self.path == "/api/ecosystem/uninstall":
-                self._send_json(ECOSYSTEM.uninstall(payload["id"]))
-            elif self.path == "/api/ecosystem/enable":
-                self._send_json({"package": ECOSYSTEM.set_enabled(payload["id"], bool(payload.get("enabled", True)))})
-            elif self.path == "/api/events":
-                project = payload.get("project_name", "default")
-                self._send_json({"events": read_events(PROJECTS_DIR, project)})
-            elif self.path == "/api/lock/acquire":
-                self._send_json(acquire_lock(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("actor", "anonymous")))
-            elif self.path == "/api/lock/release":
-                self._send_json(release_lock(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("actor", "anonymous")))
-            elif self.path == "/api/review/create":
-                self._send_json(create_review(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("author", "anonymous"), payload.get("summary", ""), payload.get("changes", [])))
-            elif self.path == "/api/review/update":
-                self._send_json(update_review(PROJECTS_DIR, payload["review_id"], payload.get("actor", "anonymous"), payload.get("status"), payload.get("comment")))
-            elif self.path == "/api/design/review":
-                chip, modules, allocation, risks = build_project(payload)
-                review = build_design_review(chip, modules, allocation, explain_risks(risks))
-                self._send_json(review)
-            elif self.path == "/api/design/review/export":
-                chip, modules, allocation, risks = build_project(payload)
-                review = build_design_review(chip, modules, allocation, explain_risks(risks))
-                path = OUTPUT_DIR / f"{_safe_name(payload.get('project_name', 'review'))}_design_review.md"
-                path.write_text(render_design_review_markdown(review), encoding="utf-8")
-                self._send_json({"exported": True, "path": str(path)})
-            elif self.path == "/api/rules/list":
-                self._send_json({"rules": list_rule_packs(PROJECT_ROOT / 'rule_packs')})
-            elif self.path == "/api/rules/import":
-                self._send_json(import_rule_pack(payload["package_dir"], PROJECT_ROOT / 'rule_packs'))
-            elif self.path == "/api/release/build":
-                self._send_json(create_release_package(PROJECT_ROOT, OUTPUT_DIR / 'releases', payload.get('name', 'EmbedPinDoctor')))
-            elif self.path == "/api/backup/create":
-                self._send_json(create_backup(PROJECT_ROOT, OUTPUT_DIR / 'backups'))
-            elif self.path == "/api/backup/restore":
-                self._send_json(restore_backup(payload["backup_path"], PROJECT_ROOT))
-            elif self.path == "/api/diagnostics/create":
-                self._send_json(create_diagnostics(PROJECT_ROOT, OUTPUT_DIR / "diagnostics", bool(payload.get("include_project_data", False))))
-            elif self.path == "/api/release/build_local":
-                self._send_json(build_release())
             else:
                 self._send_json({"error": "未知接口"}, 404)
         except Exception as exc:
@@ -351,6 +275,182 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt, *args):
         return
+
+    # --- GET handlers ---
+
+    def _get_chips(self, query):
+        self._send_json({"chips": list_chips(query.get("q", [""])[0])})
+
+    def _get_modules(self, query):
+        self._send_json({"modules": list_modules(query.get("q", [""])[0])})
+
+    def _get_projects(self, _query):
+        PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
+        projects = [p.stem for p in sorted(PROJECTS_DIR.glob("*.json"))]
+        self._send_json({"projects": projects})
+
+    def _get_project(self, query):
+        name = _safe_name(query.get("name", [""])[0])
+        project, migrations = PROJECT_STORE.load(name)
+        project["_migration"] = migrations
+        project["_history"] = PROJECT_STORE.history(name)
+        self._send_json(project)
+
+    def _get_project_history(self, query):
+        name = _safe_name(query.get("name", [""])[0])
+        self._send_json(PROJECT_STORE.history(name))
+
+    def _get_version(self, _query):
+        version_path = PROJECT_ROOT / "VERSION"
+        self._send_json({"version": version_path.read_text(encoding="utf-8").strip() if version_path.exists() else "unknown"})
+
+    def _get_ecosystem(self, _query):
+        packages = ECOSYSTEM.list_packages()
+        states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
+        self._send_json({"packages": packages, "plugins": list_plugins(states)})
+
+    def _get_examples(self, _query):
+        examples_dir = PROJECT_ROOT / "examples"
+        items = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(examples_dir.glob("*.json"))] if examples_dir.exists() else []
+        self._send_json({"examples": items})
+
+    # --- POST handlers ---
+
+    def _post_allocate(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
+        alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
+        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives})
+
+    def _post_scan_project(self, payload):
+        scan = scan_project(payload["project_path"])
+        requested_chip_id = payload.get("chip_id")
+        if scan.get("suggested_chip_id") and payload.get("use_detected_chip", True):
+            payload["chip_id"] = scan["suggested_chip_id"]
+        chip, modules, allocation, risks = build_project(payload)
+        comparison = compare_scan(scan, chip, allocation)
+        combined_risks = explain_risks(risks + comparison["risks"])
+        alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
+        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})
+
+    def _post_save(self, payload):
+        path, migrations = save_project(payload)
+        self._send_json({"saved": True, "path": str(path), "migrations": migrations, "history": PROJECT_STORE.history(payload.get("project_name", "untitled_project"))})
+
+    def _post_undo_redo(self, payload):
+        name = payload.get("project_name", "untitled_project")
+        action = PROJECT_STORE.undo if self.path.endswith("undo") else PROJECT_STORE.redo
+        project, migrations = action(name)
+        self._send_json({"project": project, "migrations": migrations, "history": PROJECT_STORE.history(name)})
+
+    def _post_export_markdown(self, payload):
+        path = export_project(payload, "markdown")
+        self._send_json({"exported": True, "path": str(path)})
+
+    def _post_export_pins(self, payload):
+        path = export_project(payload, "pins")
+        self._send_json({"exported": True, "path": str(path)})
+
+    def _post_export_platformio(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        project_name = _safe_name(payload.get("project_name", "platformio_project"))
+        result = generate_platformio_project(OUTPUT_DIR / f"{project_name}_platformio", chip, allocation)
+        self._send_json({"generated": True, **result})
+
+    def _post_export_ioc(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        project_name = _safe_name(payload.get("project_name", "ioc_hint"))
+        path = OUTPUT_DIR / f"{project_name}.ioc_hint.txt"
+        path.write_text(render_ioc_hint(chip, allocation), encoding="utf-8")
+        self._send_json({"exported": True, "path": str(path)})
+
+    def _post_custom_chip(self, payload):
+        data = payload.get("data", payload)
+        target = USER_DATA_DIR / "chips" / f"{_safe_name(data.get('id', 'custom_chip'))}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        self._send_json({"saved": True, "path": str(target)})
+
+    def _post_custom_module(self, payload):
+        data = payload.get("data", payload)
+        target = USER_DATA_DIR / "modules" / f"{_safe_name(data.get('id', 'custom_module'))}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        self._send_json({"saved": True, "path": str(target)})
+
+    def _post_update_package(self, payload):
+        self._send_json(import_data_package(payload["package_dir"], USER_DATA_DIR))
+
+    def _post_reverse_code(self, payload):
+        self._send_json({"pins": reverse_pins_from_code(payload["path"])})
+
+    def _post_version_compare(self, payload):
+        changes = compare_allocations(payload.get("old_allocation", []), payload.get("new_allocation", []))
+        self._send_json({"changes": changes})
+
+    def _post_kicad_import(self, payload):
+        self._send_json({"labels": import_kicad_labels(payload["path"])})
+
+    def _post_plugins(self, payload):
+        packages = ECOSYSTEM.list_packages()
+        states = {item["id"]: item.get("enabled", True) for item in packages if item["type"] == "plugin"}
+        self._send_json({"plugins": list_plugins(states)})
+
+    def _post_ecosystem_install(self, payload):
+        self._send_json(ECOSYSTEM.install(payload["package_dir"], bool(payload.get("allow_downgrade", False))))
+
+    def _post_ecosystem_uninstall(self, payload):
+        self._send_json(ECOSYSTEM.uninstall(payload["id"]))
+
+    def _post_ecosystem_enable(self, payload):
+        self._send_json({"package": ECOSYSTEM.set_enabled(payload["id"], bool(payload.get("enabled", True)))})
+
+    def _post_events(self, payload):
+        self._send_json({"events": read_events(PROJECTS_DIR, payload.get("project_name", "default"))})
+
+    def _post_lock_acquire(self, payload):
+        self._send_json(acquire_lock(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("actor", "anonymous")))
+
+    def _post_lock_release(self, payload):
+        self._send_json(release_lock(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("actor", "anonymous")))
+
+    def _post_review_create(self, payload):
+        self._send_json(create_review(PROJECTS_DIR, payload.get("project_name", "default"), payload.get("author", "anonymous"), payload.get("summary", ""), payload.get("changes", [])))
+
+    def _post_review_update(self, payload):
+        self._send_json(update_review(PROJECTS_DIR, payload["review_id"], payload.get("actor", "anonymous"), payload.get("status"), payload.get("comment")))
+
+    def _post_design_review(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        self._send_json(build_design_review(chip, modules, allocation, explain_risks(risks)))
+
+    def _post_design_review_export(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        review = build_design_review(chip, modules, allocation, explain_risks(risks))
+        path = OUTPUT_DIR / f"{_safe_name(payload.get('project_name', 'review'))}_design_review.md"
+        path.write_text(render_design_review_markdown(review), encoding="utf-8")
+        self._send_json({"exported": True, "path": str(path)})
+
+    def _post_rules_list(self, payload):
+        self._send_json({"rules": list_rule_packs(PROJECT_ROOT / 'rule_packs')})
+
+    def _post_rules_import(self, payload):
+        self._send_json(import_rule_pack(payload["package_dir"], PROJECT_ROOT / 'rule_packs'))
+
+    def _post_release_build(self, payload):
+        self._send_json(create_release_package(PROJECT_ROOT, OUTPUT_DIR / 'releases', payload.get('name', 'EmbedPinDoctor')))
+
+    def _post_backup_create(self, payload):
+        self._send_json(create_backup(PROJECT_ROOT, OUTPUT_DIR / 'backups'))
+
+    def _post_backup_restore(self, payload):
+        self._send_json(restore_backup(payload["backup_path"], PROJECT_ROOT))
+
+    def _post_diagnostics_create(self, payload):
+        self._send_json(create_diagnostics(PROJECT_ROOT, OUTPUT_DIR / "diagnostics", bool(payload.get("include_project_data", False))))
+
+    def _post_release_build_local(self, payload):
+        self._send_json(build_release())
 
 
 def run(host="127.0.0.1", port=8765):
