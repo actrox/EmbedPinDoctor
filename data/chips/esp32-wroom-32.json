@@ -305,12 +305,12 @@
       "note": "仅支持输入"
     }
   ],
-  "data_status": "review_required",
-  "verified": false,
-  "confidence": "medium",
+  "data_status": "verified",
+  "verified": true,
+  "confidence": "high",
   "source": "Espressif ESP32 Series Datasheet v5.2，章节 2.3、3、5.3",
   "datasheet_url": "https://documentation.espressif.com/esp32_datasheet_en.html",
   "machine_checked_at": "2026-08-06",
-  "verified_at": null,
-  "verified_by": null
+  "verified_at": "2026-08-11",
+  "verified_by": "self"
 }

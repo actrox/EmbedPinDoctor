@@ -1,2 +1,8 @@
-# P5 当前核心运行不依赖第三方 Python 包。
-# 可选打包工具：pyinstaller
+# 核心运行（零依赖，纯标准库。app/web_app.py 模式）
+# --- 可选：FastAPI Web 工作台模式（app/fastapi_app.py）---
+# pip install fastapi pydantic uvicorn
+fastapi>=0.110.0,<1.0.0
+pydantic>=2.5.0,<3.0.0
+uvicorn>=0.27.0,<1.0.0
+# 打包：
+pyinstaller>=6.0.0,<7.0.0

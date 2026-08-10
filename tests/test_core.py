@@ -129,9 +129,13 @@ class TestChecker(unittest.TestCase):
 
     def test_data_unverified(self):
         chip, oled, button, buzzer = _load_fixtures()
+        # 拷贝芯片并强制标记为未验证，避免签字后的数据影响该测试
+        chip_unverified = copy.deepcopy(chip)
+        chip_unverified["verified"] = False
+        chip_unverified["confidence"] = "medium"
         modules = [oled, button, buzzer]
-        allocation = allocate_project(chip, modules)
-        risks = check_project(chip, modules, allocation)
+        allocation = allocate_project(chip_unverified, modules)
+        risks = check_project(chip_unverified, modules, allocation)
         codes = [r["code"] for r in risks]
         self.assertIn("data_unverified", codes)
         unverified = next(r for r in risks if r["code"] == "data_unverified")

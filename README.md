@@ -77,6 +77,10 @@ python -m quality.data_audit
 
 # 核心算法回归测试
 python -m unittest tests.test_core -v
+
+# --- 可选：FastAPI 模式（需要 pip install -r requirements.txt）---
+python -m app.fastapi_app
+# 打开 http://127.0.0.1:8765/docs 查看自动生成的 OpenAPI 文档
 ```
 
 ## 内置芯片与模块
@@ -126,16 +130,21 @@ python -m unittest tests.test_core -v
 
 ```text
 EmbedPinDoctor/
-├── app/                    # Web 服务（web_app.py）和 CLI 入口（cli.py）
+├── app/                    # Web 服务 + CLI 入口
+│   ├── web_app.py          # 零依赖 BaseHTTPRequestHandler 实现（默认）
+│   ├── fastapi_app.py      # FastAPI 实现（可选，pip install -r requirements.txt）
+│   ├── schemas.py          # FastAPI Pydantic v2 数据模型
+│   └── cli.py              # 命令行入口
 ├── web/                    # 前端诊断工作台（index.html / app.js / styles.css）
-├── core/                   # 核心引擎：加载、分配、检查、项目存储、Schema
+├── core/                   # 核心引擎：加载、分配、检查、项目存储、Schema、可视化
 │   ├── loader.py           # 芯片/模块数据加载器
-│   ├── allocator.py        # 有界回溯引脚分配器
-│   ├── checker.py          # 风险检查引擎
+│   ├── allocator.py        # 有界回溯引脚分配器（MRV 启发式）
+│   ├── checker.py          # 风险检查引擎（15+ 风险类型，动态共享总线推导）
+│   ├── pin_diagram.py      # SVG 芯片引脚图生成 + 风险颜色高亮
 │   ├── project_store.py    # 原子存储 + 历史版本（撤销/重做）
 │   └── schema.py           # JSON Schema 与数据版本管理
-├── data/                   # 内置数据库
-│   ├── chips/              # 芯片 JSON 定义
+├── data/                   # 内置数据库（6 芯片 + 18 模块）
+│   ├── chips/              # 芯片 JSON 定义（含 timer/adc_channel 字段）
 │   ├── modules/            # 模块 JSON 定义
 │   └── schemas/            # chip.schema.json / module.schema.json
 ├── quality/                # 数据质量、设计审查、规则包
@@ -148,10 +157,11 @@ EmbedPinDoctor/
 │   ├── kicad_import.py     # KiCad 标签导入
 │   ├── platformio.py       # PlatformIO ini 解析
 │   ├── ioc_export.py       # STM32CubeMX .ioc 导出提示
+│   ├── ioc_import.py       # STM32CubeMX .ioc 双向导入（读取已有分配）
 │   ├── code_reverse.py     # C/C++ 引脚引用反查
 │   ├── package_update.py   # 数据增量包导入
 │   └── risk_explainer.py   # 风险解释器（通俗语言 + 修复片段）
-├── export/                 # 文档与代码模板导出
+├── export/                 # 文档与代码模板导出（含 SVG 引脚图）
 │   ├── markdown.py         # Markdown 接线文档
 │   ├── pins.py             # pins.h / Arduino / HAL / ESP-IDF
 │   └── templates.py        # 模板字符串管理
@@ -174,14 +184,18 @@ EmbedPinDoctor/
 │   ├── packager.py         # PyInstaller 封装逻辑
 │   └── EmbedPinDoctor.spec # PyInstaller spec
 ├── utils/                  # 通用工具（日志配置等）
-├── docs/                   # 验收报告、使用手册、审核清单
+├── tests/                  # 核心算法回归测试（python -m unittest tests.test_core）
+│   └── test_core.py        # allocator + checker 13 条用例
+├── tools/                  # 数据生态扩展工具
+│   ├── chip_data_generator.py # 芯片数据模板生成 / 最终化 / 重复清理
+│   └── kicad_symbol_to_module.py # KiCad .kicad_sym → module JSON 批量导入
 ├── examples/               # 示例项目 JSON（ESP32/RP2040/STM32）
 ├── projects/               # 用户项目存储（原子写入 + 历史版本）
 ├── output/                 # 生成结果输出目录（运行时产生）
 ├── launcher.py             # 动态端口 + 健康检查启动器
 ├── start_embedpindoctor.py # 用户友好入口（自动打开浏览器）
 ├── build_windows.bat       # Windows PyInstaller 一键构建
-├── requirements.txt        # 可选依赖（核心零依赖）
+├── requirements.txt        # 可选依赖（核心零依赖，FastAPI 模式）
 ├── VERSION                 # 语义版本号
 ├── CHANGELOG.md            # 版本变更日志
 └── README.md               # 本文件
@@ -202,10 +216,37 @@ build_windows.bat
 
 生成的单文件位于 `dist\EmbedPinDoctor.exe`；运行数据写入 `%LOCALAPPDATA%\EmbedPinDoctor`。诊断包默认不包含项目文件。
 
+## 工具脚本
+
+```bash
+# 查看支持的芯片家族模板
+python tools/chip_data_generator.py families
+
+# 生成芯片模板（填完 template.json 后下一步 finalize）
+python tools/chip_data_generator.py template stm32l4xx new_chip_template.json
+
+# 模板最终化（去除 _* 字段，填充 machine_checked_at）
+python tools/chip_data_generator.py finalize new_chip_template.json data/chips/my_chip.json
+
+# 清理芯片 functions 数组中的重复项
+python tools/chip_data_generator.py dedup data/chips/my_chip.json
+
+# 从 KiCad 符号库批量导入模块
+python tools/kicad_symbol_to_module.py path/to/library.kicad_sym data/modules/
+```
+
+## 可视化接口
+
+| 接口 | 说明 |
+|------|------|
+| `GET /api/diagram/svg?chip_id=stm32f103c8t6` | 纯芯片 SVG 引脚图 |
+| `POST /api/export/svg` | 带分配信息 + 风险高亮的 SVG 引脚图 |
+| `POST /api/ioc/import` | 从 `.ioc` 反推已有引脚分配 |
+
 ## 扩展开发
 
 ### 新增芯片 / 模块
-参考 `data/chips/stm32f103c8t6.json` 和 `data/modules/oled_i2c.json`，使用 `data/schemas/` 下的 Schema 校验后放入对应目录，或打包为生态包安装。
+优先使用 `tools/chip_data_generator.py template` 生成模板后填空。直接手填可参考 `data/chips/stm32f103c8t6.json` 和 `data/modules/oled_i2c.json`，使用 `data/schemas/` 下的 Schema 校验后放入对应目录，或打包为生态包安装。
 
 ### 新增规则包
 参考 `rule_packs/demo_pack/`，提供 `manifest.json` 与 `rules/*.json`。

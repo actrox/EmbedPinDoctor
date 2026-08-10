@@ -37,6 +37,8 @@ from diagnostics.collector import create_diagnostics
 from release.build_release import build_release
 from core.project_store import ProjectStore
 from ecosystem.package_manager import PackageManager
+from core.pin_diagram import generate_chip_svg
+from integrations.ioc_import import import_ioc
 
 USER_ROOT = (Path(os.environ.get("LOCALAPPDATA", Path.home())) / "EmbedPinDoctor") if getattr(sys, "frozen", False) else PROJECT_ROOT
 BUILTIN_DATA_DIR = PROJECT_ROOT / "data"
@@ -105,17 +107,36 @@ def list_modules(query=""):
     return modules
 
 
+class InputValidationError(ValueError):
+    def __init__(self, field, message):
+        super().__init__(f"参数错误 [{field}]: {message}")
+        self.field = field
+
+
+def _require(payload, field, types=None, allow_empty=False):
+    if field not in payload:
+        raise InputValidationError(field, "缺少必填字段")
+    value = payload[field]
+    if types is not None and value is not None and not isinstance(value, types):
+        raise InputValidationError(field, f"应为 {types}，实际 {type(value).__name__}")
+    if not allow_empty and value in (None, "", [], {}):
+        raise InputValidationError(field, "不能为空")
+    return value
+
+
 def build_project(payload):
     chip_id = payload.get("chip_id") or payload.get("chip")
     module_ids = payload.get("module_ids") or payload.get("modules") or []
     allocation_override = payload.get("allocation")
     if not chip_id:
-        raise ValueError("缺少 chip_id")
+        raise InputValidationError("chip_id", "缺少必填字段，请选择芯片")
     if not module_ids:
-        raise ValueError("至少选择一个模块")
+        raise InputValidationError("module_ids", "至少选择一个模块")
+    if not isinstance(module_ids, (list, tuple)):
+        raise InputValidationError("module_ids", "应为数组")
 
     chip = load_chip(_data_file("chips", chip_id))
-    modules = [load_module(_data_file("modules", module_id)) for module_id in module_ids]
+    modules = [load_module(_data_file("modules", str(module_id))) for module_id in module_ids]
     allocation = allocation_override or allocate_project(
         chip, modules,
         locked_pins=payload.get("locked_pins"),
@@ -127,6 +148,7 @@ def build_project(payload):
 
 
 def save_project(payload):
+    _require(payload, "project_name", str, allow_empty=False)
     return PROJECT_STORE.save(payload)
 
 
@@ -168,6 +190,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         "/api/version": "_get_version",
         "/api/ecosystem": "_get_ecosystem",
         "/api/examples": "_get_examples",
+        "/api/diagram/svg": "_get_diagram_svg",
     }
     POST_ROUTES = {
         "/api/allocate": "_post_allocate",
@@ -179,12 +202,14 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         "/api/export/pins": "_post_export_pins",
         "/api/export/platformio": "_post_export_platformio",
         "/api/export/ioc": "_post_export_ioc",
+        "/api/export/svg": "_post_export_svg",
         "/api/custom/chip": "_post_custom_chip",
         "/api/custom/module": "_post_custom_module",
         "/api/update/package": "_post_update_package",
         "/api/reverse/code": "_post_reverse_code",
         "/api/version/compare": "_post_version_compare",
         "/api/kicad/import": "_post_kicad_import",
+        "/api/ioc/import": "_post_ioc_import",
         "/api/plugins": "_post_plugins",
         "/api/ecosystem/install": "_post_ecosystem_install",
         "/api/ecosystem/uninstall": "_post_ecosystem_uninstall",
@@ -236,6 +261,8 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         if handler_name:
             try:
                 getattr(self, handler_name)(parse_qs(parsed.query))
+            except InputValidationError as exc:
+                self._send_json({"error": str(exc), "code": "input_error", "field": exc.field}, 400)
             except Exception as exc:
                 logger.exception("GET %s failed", parsed.path)
                 self._send_json({"error": str(exc)}, 400)
@@ -269,6 +296,8 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
                 self._send_json({"exported": True, "path": str(path)})
             else:
                 self._send_json({"error": "未知接口"}, 404)
+        except InputValidationError as exc:
+            self._send_json({"error": str(exc), "code": "input_error", "field": exc.field}, 400)
         except Exception as exc:
             logger.exception("POST %s failed", self.path)
             self._send_json({"error": str(exc)}, 400)
@@ -313,6 +342,19 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         examples_dir = PROJECT_ROOT / "examples"
         items = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(examples_dir.glob("*.json"))] if examples_dir.exists() else []
         self._send_json({"examples": items})
+
+    def _get_diagram_svg(self, query):
+        chip_id = query.get("chip_id", [""])[0]
+        if not chip_id:
+            raise InputValidationError("chip_id", "缺少必填参数")
+        chip = load_chip(_data_file("chips", chip_id))
+        svg = generate_chip_svg(chip)
+        body = svg.encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "image/svg+xml; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     # --- POST handlers ---
 
@@ -382,6 +424,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self._send_json(import_data_package(payload["package_dir"], USER_DATA_DIR))
 
     def _post_reverse_code(self, payload):
+        _require(payload, "path", str)
         self._send_json({"pins": reverse_pins_from_code(payload["path"])})
 
     def _post_version_compare(self, payload):
@@ -389,7 +432,23 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self._send_json({"changes": changes})
 
     def _post_kicad_import(self, payload):
+        _require(payload, "path", str)
         self._send_json({"labels": import_kicad_labels(payload["path"])})
+
+    def _post_ioc_import(self, payload):
+        _require(payload, "path", str)
+        self._send_json(import_ioc(payload["path"]))
+
+    def _post_export_svg(self, payload):
+        chip, modules, allocation, risks = build_project(payload)
+        if payload.get("explain_risks", True):
+            risks = explain_risks(risks)
+        svg = generate_chip_svg(chip, allocation, risks)
+        project_name = _safe_name(payload.get("project_name", "pin_diagram"))
+        path = OUTPUT_DIR / f"{project_name}_pins.svg"
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        path.write_text(svg, encoding="utf-8")
+        self._send_json({"exported": True, "path": str(path)})
 
     def _post_plugins(self, payload):
         packages = ECOSYSTEM.list_packages()
