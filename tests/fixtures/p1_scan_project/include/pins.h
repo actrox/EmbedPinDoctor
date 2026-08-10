@@ -1,4 +1,0 @@
-#pragma once
-#define OLED_I2C_SCL GPIO_NUM_18
-#define OLED_I2C_SDA GPIO_NUM_17
-#define STATUS_LED GPIO_NUM_2

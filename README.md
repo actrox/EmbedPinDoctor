@@ -162,12 +162,10 @@ EmbedPinDoctor/
 │   ├── packager.py         # PyInstaller 封装逻辑
 │   └── EmbedPinDoctor.spec # PyInstaller spec
 ├── utils/                  # 通用工具（日志配置等）
-├── tests/                  # 回归验证（P0–P6 各级别测试）
-│   └── fixtures/           # 测试用工程（p1_scan_project）
 ├── docs/                   # 验收报告、使用手册、审核清单
 ├── examples/               # 示例项目 JSON（ESP32/RP2040/STM32）
 ├── projects/               # 用户项目存储（原子写入 + 历史版本）
-├── output/                 # 生成结果（Markdown、代码、中间文件）
+├── output/                 # 生成结果输出目录（运行时产生）
 ├── launcher.py             # 动态端口 + 健康检查启动器
 ├── start_embedpindoctor.py # 用户友好入口（自动打开浏览器）
 ├── build_windows.bat       # Windows PyInstaller 一键构建
@@ -177,20 +175,10 @@ EmbedPinDoctor/
 └── README.md               # 本文件
 ```
 
-## 验证与测试
+## 数据审计
 
 ```bash
-# 数据审计（推荐每次更新数据后运行）
 python -m quality.data_audit
-
-# P1 工程扫描测试
-python tests/p1_project_scan_test.py
-
-# P2 推荐与多方案测试
-python tests/p2_recommendation_test.py
-
-# 全量回归
-python run_tests.py
 ```
 
 ## Windows 发布构建
