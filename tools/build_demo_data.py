@@ -15,6 +15,8 @@ def build_demo_data(output=None):
     for path in sorted((ROOT / "examples").glob("*.json")):
         project = json.loads(path.read_text(encoding="utf-8"))
         result = service.build_project({**project, "include_alternatives": True, "alternative_count": 2})
+        result["solver"]["elapsed_ms"] = 0
+        result["solver"]["cache_hit"] = False
         examples.append({"project": project, "result": result})
     payload = {
         "version": (ROOT / "VERSION").read_text(encoding="utf-8").strip(),
@@ -24,7 +26,7 @@ def build_demo_data(output=None):
     }
     target = Path(output) if output else ROOT / "web" / "generated" / "demo-data.json"
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return target
 
 

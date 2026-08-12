@@ -30,6 +30,7 @@ jobs:
       - name: Verify generated demo data
         run: |
           python -m tools.build_demo_data
+          npx prettier --write web/generated/demo-data.json
           git diff --exit-code -- web/generated/demo-data.json
       - uses: actions/setup-node@v4
         with:

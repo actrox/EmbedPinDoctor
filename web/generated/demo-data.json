@@ -795,7 +795,7 @@
           "limit_reached": false,
           "assigned_count": 6,
           "total_count": 6,
-          "elapsed_ms": 2.18,
+          "elapsed_ms": 0,
           "cache_hit": false
         },
         "data_trust": {
@@ -1557,7 +1557,7 @@
           "limit_reached": true,
           "assigned_count": 7,
           "total_count": 7,
-          "elapsed_ms": 509.8,
+          "elapsed_ms": 0,
           "cache_hit": false
         },
         "data_trust": {
@@ -2588,7 +2588,7 @@
           "limit_reached": true,
           "assigned_count": 11,
           "total_count": 11,
-          "elapsed_ms": 553.06,
+          "elapsed_ms": 0,
           "cache_hit": false
         },
         "data_trust": {
