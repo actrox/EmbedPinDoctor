@@ -333,7 +333,8 @@ def generate_chip_svg(chip, allocation=None, risks=None):
             mod_pin = alloc.get("module_pin", "")
             func = alloc.get("function", "")
             title_parts.append(f"分配: {mod_name} {mod_pin} ({func})")
-        svg_parts.append(f"<title>{escape('\\n'.join(title_parts))}</title>")
+        title_text = escape("\n".join(title_parts))
+        svg_parts.append(f"<title>{title_text}</title>")
 
         svg_parts.append("</g>")
 
