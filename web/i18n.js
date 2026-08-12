@@ -38,6 +38,10 @@ const messages = {
     newProject: "新建向导",
     evidence: "数据证据",
     exportDiagram: "导出 SVG 架构图",
+    signalMapping: "信号映射",
+    signalMappingHint:
+      "将项目中的自定义符号映射到医生信号，每行格式：MY_CLOCK = OLED_I2C_SCL",
+    saveMapping: "保存映射并复检",
     diagramHint: "点击模块可高亮相关连线",
     wizardTitle: "新建硬件项目",
     evidenceTitle: "硬件数据证据",
@@ -159,6 +163,10 @@ const messages = {
     newProject: "New project",
     evidence: "Data evidence",
     exportDiagram: "Export SVG diagram",
+    signalMapping: "Signal mapping",
+    signalMappingHint:
+      "Map project-specific names to doctor signals, one per line: MY_CLOCK = OLED_I2C_SCL",
+    saveMapping: "Save mapping & recheck",
     diagramHint: "Click a module to highlight its connections",
     wizardTitle: "Create hardware project",
     evidenceTitle: "Hardware data evidence",

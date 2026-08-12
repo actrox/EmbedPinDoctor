@@ -40,6 +40,7 @@ from core.project_store import ProjectStore
 from ecosystem.package_manager import PackageManager
 from core.pin_diagram import generate_chip_svg
 from integrations.ioc_import import import_ioc
+from app.project_service import ProjectService
 
 USER_ROOT = (Path(os.environ.get("LOCALAPPDATA", Path.home())) / "EmbedPinDoctor") if getattr(sys, "frozen", False) else PROJECT_ROOT
 BUILTIN_DATA_DIR = PROJECT_ROOT / "data"
@@ -56,6 +57,7 @@ SESSION_TOKEN = os.environ.get("EMBEDPIN_SESSION_TOKEN") or secrets.token_urlsaf
 INSTALLED_PLUGIN_DIR = USER_ROOT / "user_plugins"
 INSTALLED_RULE_DIR = USER_ROOT / "user_rule_packs"
 ECOSYSTEM = PackageManager(USER_ROOT / ".ecosystem", USER_DATA_DIR, INSTALLED_RULE_DIR, INSTALLED_PLUGIN_DIR, APP_VERSION)
+PROJECT_SERVICE = ProjectService(DATA_DIR, USER_DATA_DIR)
 
 
 def list_plugins(states=None):
@@ -83,31 +85,11 @@ def _safe_name(name):
 
 
 def list_chips(query=""):
-    query = query.lower().strip()
-    chips = []
-    for path in _data_files("chips"):
-        chip = load_chip(path)
-        item = {"id": chip["id"], "name": chip["name"], "voltage": chip.get("voltage", "未知")}
-        if not query or query in item["id"].lower() or query in item["name"].lower():
-            chips.append(item)
-    return chips
+    return PROJECT_SERVICE.list_chips(query)
 
 
 def list_modules(query=""):
-    query = query.lower().strip()
-    modules = []
-    for path in _data_files("modules"):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        item = {
-            "id": data["id"],
-            "name": data["name"],
-            "voltage": data.get("voltage", "未知"),
-            "description": data.get("description", ""),
-        }
-        haystack = f"{item['id']} {item['name']} {item['description']}".lower()
-        if not query or query in haystack:
-            modules.append(item)
-    return modules
+    return PROJECT_SERVICE.list_modules(query)
 
 
 class InputValidationError(ValueError):
@@ -128,31 +110,11 @@ def _require(payload, field, types=None, allow_empty=False):
 
 
 def build_project(payload):
-    chip_id = payload.get("chip_id") or payload.get("chip")
-    module_ids = payload.get("module_ids") or payload.get("modules") or []
-    allocation_override = payload.get("allocation")
-    if not chip_id:
-        raise InputValidationError("chip_id", "缺少必填字段，请选择芯片")
-    if not module_ids:
-        raise InputValidationError("module_ids", "至少选择一个模块")
-    if not isinstance(module_ids, (list, tuple)):
-        raise InputValidationError("module_ids", "应为数组")
-
-    chip = load_chip(_data_file("chips", chip_id))
-    modules = [load_module(_data_file("modules", str(module_id))) for module_id in module_ids]
-    if allocation_override:
-        allocation = allocation_override
-        solver = {"status": "manual", "nodes_searched": 0, "limit_reached": False, "assigned_count": sum(item.get("chip_pin") != "未分配" for item in allocation), "total_count": len(allocation)}
-    else:
-        allocation, solver = allocate_project(
-            chip, modules,
-            locked_pins=payload.get("locked_pins"),
-            preferred_allocation=payload.get("preferred_allocation"),
-            strategy=payload.get("strategy", "recommended"),
-            return_metadata=True,
-        )
-    risks = check_project(chip, modules, allocation)
-    return chip, modules, allocation, risks, solver
+    try:
+        result = PROJECT_SERVICE.build_project(payload)
+    except ValueError as exc:
+        raise InputValidationError("project", str(exc)) from exc
+    return result["chip"], result["modules"], result["allocation"], result["risks"], result["solver"]
 
 
 def save_project(payload):
@@ -374,10 +336,10 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
     # --- POST handlers ---
 
     def _post_allocate(self, payload):
-        chip, modules, allocation, risks, solver = build_project(payload)
+        result = PROJECT_SERVICE.build_project(payload)
+        chip, modules, allocation, risks, solver = result["chip"], result["modules"], result["allocation"], result["risks"], result["solver"]
         risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
-        alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
-        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives, "solver": solver, "data_trust": {"verified": chip.get("verified", False), "status": chip.get("data_status"), "source": chip.get("datasheet_url")}})
+        self._send_json({**result, "risks": risks})
 
     def _post_scan_project(self, payload):
         scan = scan_project(payload["project_path"])
@@ -385,7 +347,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         if scan.get("suggested_chip_id") and payload.get("use_detected_chip", True):
             payload["chip_id"] = scan["suggested_chip_id"]
         chip, modules, allocation, risks, solver = build_project(payload)
-        comparison = compare_scan(scan, chip, allocation)
+        comparison = compare_scan(scan, chip, allocation, payload.get("signal_mapping"))
         combined_risks = explain_risks(risks + comparison["risks"])
         alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
         self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "solver": solver, "data_trust": {"verified": chip.get("verified", False), "status": chip.get("data_status"), "source": chip.get("datasheet_url")}, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})

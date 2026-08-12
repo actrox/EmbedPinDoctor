@@ -13,6 +13,8 @@ class TestWebAssets(unittest.TestCase):
         self.assertIn('id="languageSelect"', html)
         self.assertIn("./i18n.js", html)
         self.assertIn("./demo.js", html)
+        self.assertIn("./views.js", html)
+        self.assertIn("./examples.js", html)
         self.assertIn('hostname.endsWith("github.io")', app)
         self.assertIn("Give your hardware a", translations)
 
@@ -21,6 +23,7 @@ class TestWebAssets(unittest.TestCase):
         self.assertTrue((ROOT / "README_EN.md").exists())
         self.assertTrue((ROOT / "docs/images/workbench-zh.png").exists())
         self.assertTrue((ROOT / "docs/images/workbench-en.png").exists())
+        self.assertTrue((ROOT / "web/generated/demo-data.json").exists())
 
 
 if __name__ == "__main__":

@@ -17,6 +17,11 @@
     "spi_max_hz": {"type": "number", "minimum": 1},
     "spi_bus": {"type": "string", "minLength": 1},
     "uart_requires_flow_control": {"type": "boolean"},
+    "peak_current_ma": {"type": "number", "minimum": 0},
+    "startup_current_ma": {"type": "number", "minimum": 0},
+    "analog_output_max_v": {"type": "number", "minimum": 0},
+    "requires_decoupling": {"type": "boolean"},
+    "bus_termination": {"type": "string", "minLength": 1},
     "requirements": {
       "type": "array", "minItems": 1,
       "items": {

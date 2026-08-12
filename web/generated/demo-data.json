@@ -1,0 +1,2603 @@
+{
+  "version": "0.2.0-alpha.1",
+  "chips": [
+    {
+      "id": "esp32-wroom-32",
+      "name": "ESP32-WROOM-32",
+      "voltage": "3.3V",
+      "tier": "verified",
+      "confidence": "high"
+    },
+    {
+      "id": "esp32s3-wroom-1",
+      "name": "ESP32-S3-WROOM-1",
+      "voltage": "3.3V",
+      "tier": "experimental",
+      "confidence": "medium"
+    },
+    {
+      "id": "nrf52840",
+      "name": "nRF52840",
+      "voltage": "3.3V",
+      "tier": "experimental",
+      "confidence": "medium"
+    },
+    {
+      "id": "rp2040",
+      "name": "Raspberry Pi Pico (RP2040)",
+      "voltage": "3.3V",
+      "tier": "verified",
+      "confidence": "high"
+    },
+    {
+      "id": "stm32f103c8t6",
+      "name": "STM32F103C8T6",
+      "voltage": "3.3V",
+      "tier": "verified",
+      "confidence": "high"
+    },
+    {
+      "id": "stm32f401ccu6",
+      "name": "STM32F401CCU6",
+      "voltage": "3.3V",
+      "tier": "experimental",
+      "confidence": "medium"
+    }
+  ],
+  "modules": [
+    {
+      "id": "analog_sensor",
+      "name": "模拟量传感器",
+      "voltage": "3.3V",
+      "description": "0-3.3V ADC 输入传感器"
+    },
+    {
+      "id": "button",
+      "name": "普通按键",
+      "voltage": "3.3V",
+      "description": "单个 GPIO 按键输入"
+    },
+    {
+      "id": "buzzer",
+      "name": "蜂鸣器",
+      "voltage": "3.3V",
+      "description": "有源或无源蜂鸣器控制信号"
+    },
+    {
+      "id": "can_transceiver",
+      "name": "CAN 收发器模块",
+      "voltage": "3.3V",
+      "description": "CAN 总线收发器（TJA1050/SN65HVD230 等）"
+    },
+    {
+      "id": "custom_test_module",
+      "name": "自定义测试模块",
+      "voltage": "3.3V",
+      "description": ""
+    },
+    {
+      "id": "dht22",
+      "name": "DHT22 温湿度传感器",
+      "voltage": "3.3V",
+      "description": "单总线数字温湿度传感器"
+    },
+    {
+      "id": "ds18b20",
+      "name": "DS18B20 温度传感器",
+      "voltage": "3.3V",
+      "description": "1-Wire 数字温度传感器"
+    },
+    {
+      "id": "esp32_cam",
+      "name": "ESP32-CAM 摄像头模块",
+      "voltage": "3.3V",
+      "description": "AI-Thinker ESP32-CAM 摄像头模块，UART 通信"
+    },
+    {
+      "id": "lorawan_uart",
+      "name": "LoRa UART 模块",
+      "voltage": "3.3V",
+      "description": "UART 通信模块"
+    },
+    {
+      "id": "motor_tb6612",
+      "name": "TB6612 电机驱动",
+      "voltage": "3.3V",
+      "description": "双路直流电机 PWM 和方向控制"
+    },
+    {
+      "id": "mpu6050",
+      "name": "MPU6050 姿态传感器",
+      "voltage": "3.3V",
+      "description": "I2C 六轴姿态传感器，可选中断引脚"
+    },
+    {
+      "id": "neo6m_gps",
+      "name": "NEO-6M GPS 模块",
+      "voltage": "3.3V",
+      "description": "UART 通信 GPS 定位模块"
+    },
+    {
+      "id": "oled_i2c",
+      "name": "OLED I2C 屏幕",
+      "voltage": "3.3V",
+      "description": "常见 0.96 寸 I2C OLED 显示屏"
+    },
+    {
+      "id": "relay_module",
+      "name": "继电器模块",
+      "voltage": "5V",
+      "description": "GPIO 控制继电器"
+    },
+    {
+      "id": "rotary_encoder",
+      "name": "旋转编码器",
+      "voltage": "3.3V",
+      "description": "A/B 相位和按压开关输入"
+    },
+    {
+      "id": "rs485_module",
+      "name": "RS485 模块",
+      "voltage": "5V",
+      "description": "RS485 收发模块（MAX485 等）"
+    },
+    {
+      "id": "sd_card",
+      "name": "SD 卡模块",
+      "voltage": "3.3V",
+      "description": "SPI 模式 SD 卡模块"
+    },
+    {
+      "id": "ws2812",
+      "name": "WS2812 灯带",
+      "voltage": "5V",
+      "description": "单线时序灯带数据输入"
+    }
+  ],
+  "examples": [
+    {
+      "project": {
+        "project_name": "esp32_iot_node",
+        "notes": "ESP32 物联网节点示例",
+        "chip_id": "esp32-wroom-32",
+        "module_ids": ["oled_i2c", "analog_sensor", "lorawan_uart", "ws2812"]
+      },
+      "result": {
+        "chip": {
+          "schema_version": 1,
+          "id": "esp32-wroom-32",
+          "name": "ESP32-WROOM-32",
+          "voltage": "3.3V",
+          "io_voltage": 3.3,
+          "absolute_max_input_voltage": 3.6,
+          "default_max_output_current_ma": 12,
+          "supports_open_drain": true,
+          "pins": [
+            {
+              "name": "GPIO0",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH1",
+              "tags": ["boot"],
+              "note": "启动脚"
+            },
+            {
+              "name": "GPIO2",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH2",
+              "tags": ["boot"],
+              "note": "启动脚"
+            },
+            {
+              "name": "GPIO4",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO5",
+              "functions": ["GPIO", "SPI1_SCK", "PWM", "EXTI"],
+              "tags": ["boot"],
+              "note": "启动配置相关脚"
+            },
+            {
+              "name": "GPIO12",
+              "functions": ["GPIO", "SPI1_MISO", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH5",
+              "tags": ["boot"],
+              "note": "启动相关"
+            },
+            {
+              "name": "GPIO13",
+              "functions": ["GPIO", "SPI1_MOSI", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO14",
+              "functions": ["GPIO", "SPI1_SCK", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH6",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO15",
+              "functions": ["GPIO", "SPI1_CS", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH3",
+              "tags": ["boot"],
+              "note": ""
+            },
+            {
+              "name": "GPIO16",
+              "functions": ["GPIO", "UART2_RX", "UART_RX", "PWM", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO17",
+              "functions": ["GPIO", "UART2_TX", "UART_TX", "PWM", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO18",
+              "functions": ["GPIO", "SPI1_SCK", "PWM", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO19",
+              "functions": ["GPIO", "SPI1_MISO", "PWM", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO21",
+              "functions": ["GPIO", "I2C1_SDA", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO22",
+              "functions": ["GPIO", "I2C1_SCL", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO23",
+              "functions": ["GPIO", "SPI1_MOSI", "PWM", "EXTI"],
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO25",
+              "functions": ["GPIO", "ADC", "DAC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH8",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO26",
+              "functions": ["GPIO", "ADC", "DAC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH9",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO27",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC2_CH7",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO32",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC1_CH4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO33",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "adc_channel": "ADC1_CH5",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GPIO34",
+              "functions": ["GPIO", "ADC", "EXTI"],
+              "adc_channel": "ADC1_CH6",
+              "tags": ["input_only"],
+              "note": "仅支持输入"
+            },
+            {
+              "name": "GPIO35",
+              "functions": ["GPIO", "ADC", "EXTI"],
+              "adc_channel": "ADC1_CH7",
+              "tags": ["input_only"],
+              "note": "仅支持输入"
+            },
+            {
+              "name": "GPIO36",
+              "functions": ["GPIO", "ADC", "EXTI"],
+              "adc_channel": "ADC1_CH0",
+              "tags": ["input_only"],
+              "note": "仅支持输入"
+            },
+            {
+              "name": "GPIO39",
+              "functions": ["GPIO", "ADC", "EXTI"],
+              "adc_channel": "ADC1_CH3",
+              "tags": ["input_only"],
+              "note": "仅支持输入"
+            }
+          ],
+          "data_status": "verified",
+          "verified": true,
+          "confidence": "high",
+          "source": "Espressif ESP32 Series Datasheet v5.2，章节 2.3、3、5.3",
+          "datasheet_url": "https://documentation.espressif.com/esp32_datasheet_en.html",
+          "machine_checked_at": "2026-08-06",
+          "verified_at": "2026-08-11",
+          "verified_by": "self"
+        },
+        "modules": [
+          {
+            "schema_version": 1,
+            "id": "oled_i2c",
+            "name": "OLED I2C 屏幕",
+            "description": "常见 0.96 寸 I2C OLED 显示屏",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "SSD1306 类 3.3V I2C 显示模块通用模型",
+            "needs_pullup": true,
+            "i2c_bus": "I2C1",
+            "i2c_address": "0x3C",
+            "requirements": [
+              {
+                "module_pin": "SCL",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_scl",
+                "preferred_functions": ["I2C1_SCL"],
+                "note": "I2C 时钟线"
+              },
+              {
+                "module_pin": "SDA",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_sda",
+                "preferred_functions": ["I2C1_SDA"],
+                "note": "I2C 数据线"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "analog_sensor",
+            "name": "模拟量传感器",
+            "description": "0-3.3V ADC 输入传感器",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用 0–3.3V 模拟信号模型",
+            "requirements": [
+              {
+                "module_pin": "OUT",
+                "function": "ADC",
+                "direction": "input",
+                "preferred_functions": ["ADC"]
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "lorawan_uart",
+            "name": "LoRa UART 模块",
+            "description": "UART 通信模块",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用 3.3V UART 模块模型",
+            "requirements": [
+              {
+                "module_pin": "TX",
+                "function": "UART_RX",
+                "direction": "input",
+                "preferred_functions": ["UART_RX"]
+              },
+              {
+                "module_pin": "RX",
+                "function": "UART_TX",
+                "direction": "output",
+                "preferred_functions": ["UART_TX"]
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "ws2812",
+            "name": "WS2812 灯带",
+            "description": "单线时序灯带数据输入",
+            "voltage": "5V",
+            "logic_voltage": 5.0,
+            "source": "WS2812 单线数据输入保守模型",
+            "voltage_tolerant": true,
+            "requirements": [
+              {
+                "module_pin": "DIN",
+                "function": "PWM",
+                "direction": "output",
+                "drive_current_ma": 1,
+                "preferred_functions": ["PWM"],
+                "note": "需要确认 3.3V 到 5V 电平转换"
+              }
+            ]
+          }
+        ],
+        "allocation": [
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SCL",
+            "chip_pin": "GPIO22",
+            "function": "I2C1_SCL",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SCL",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SDA",
+            "chip_pin": "GPIO21",
+            "function": "I2C1_SDA",
+            "direction": "bidirectional",
+            "score": 130,
+            "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SDA",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "analog_sensor",
+            "module_name": "模拟量传感器",
+            "module_pin": "OUT",
+            "chip_pin": "GPIO34",
+            "function": "ADC",
+            "direction": "input",
+            "score": 135,
+            "note": "支持 ADC；避开启动、调试和默认高电平风险脚；命中模块首选复用功能；输入信号优先使用输入专用脚",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 ADC",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能",
+              "输入信号优先使用输入专用脚"
+            ]
+          },
+          {
+            "module_id": "lorawan_uart",
+            "module_name": "LoRa UART 模块",
+            "module_pin": "TX",
+            "chip_pin": "GPIO16",
+            "function": "UART_RX",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 UART_RX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 UART_RX",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "lorawan_uart",
+            "module_name": "LoRa UART 模块",
+            "module_pin": "RX",
+            "chip_pin": "GPIO17",
+            "function": "UART_TX",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 UART_TX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 UART_TX",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "ws2812",
+            "module_name": "WS2812 灯带",
+            "module_pin": "DIN",
+            "chip_pin": "GPIO13",
+            "function": "PWM",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 PWM",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          }
+        ],
+        "risks": [
+          {
+            "level": "提示",
+            "code": "pullup_required",
+            "message": "OLED I2C 屏幕 使用 I2C，请确认 SDA/SCL 已有合适上拉电阻。",
+            "suggestion": "检查模块板载电阻，并根据总线长度和速率计算等效上拉，上拉电压应不高于 3.6V。",
+            "item": {
+              "module": "OLED I2C 屏幕"
+            },
+            "pin": null,
+            "confidence": "high",
+            "weight": 2.0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "推荐方案",
+            "score": 130.83,
+            "allocation": [
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "GPIO22",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "GPIO21",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "analog_sensor",
+                "module_name": "模拟量传感器",
+                "module_pin": "OUT",
+                "chip_pin": "GPIO34",
+                "function": "ADC",
+                "direction": "input",
+                "score": 135,
+                "note": "支持 ADC；避开启动、调试和默认高电平风险脚；命中模块首选复用功能；输入信号优先使用输入专用脚",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 ADC",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能",
+                  "输入信号优先使用输入专用脚"
+                ]
+              },
+              {
+                "module_id": "lorawan_uart",
+                "module_name": "LoRa UART 模块",
+                "module_pin": "TX",
+                "chip_pin": "GPIO16",
+                "function": "UART_RX",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 UART_RX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 UART_RX",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "lorawan_uart",
+                "module_name": "LoRa UART 模块",
+                "module_pin": "RX",
+                "chip_pin": "GPIO17",
+                "function": "UART_TX",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 UART_TX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 UART_TX",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "ws2812",
+                "module_name": "WS2812 灯带",
+                "module_pin": "DIN",
+                "chip_pin": "GPIO13",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [],
+            "change_count": 0
+          },
+          {
+            "name": "备选方案 1",
+            "score": 130.83,
+            "allocation": [
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "GPIO22",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "GPIO21",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "analog_sensor",
+                "module_name": "模拟量传感器",
+                "module_pin": "OUT",
+                "chip_pin": "GPIO35",
+                "function": "ADC",
+                "direction": "input",
+                "score": 135,
+                "note": "支持 ADC；避开启动、调试和默认高电平风险脚；命中模块首选复用功能；输入信号优先使用输入专用脚",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 ADC",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能",
+                  "输入信号优先使用输入专用脚"
+                ]
+              },
+              {
+                "module_id": "lorawan_uart",
+                "module_name": "LoRa UART 模块",
+                "module_pin": "TX",
+                "chip_pin": "GPIO16",
+                "function": "UART_RX",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 UART_RX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 UART_RX",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "lorawan_uart",
+                "module_name": "LoRa UART 模块",
+                "module_pin": "RX",
+                "chip_pin": "GPIO17",
+                "function": "UART_TX",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 UART_TX；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 UART_TX",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "ws2812",
+                "module_name": "WS2812 灯带",
+                "module_pin": "DIN",
+                "chip_pin": "GPIO13",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [
+              {
+                "module_id": "analog_sensor",
+                "module_pin": "OUT",
+                "from": "GPIO34",
+                "to": "GPIO35"
+              }
+            ],
+            "change_count": 1
+          }
+        ],
+        "solver": {
+          "status": "optimal",
+          "nodes_searched": 218,
+          "limit_reached": false,
+          "assigned_count": 6,
+          "total_count": 6,
+          "elapsed_ms": 2.18,
+          "cache_hit": false
+        },
+        "data_trust": {
+          "verified": true,
+          "tier": "verified",
+          "status": "verified",
+          "source": "https://documentation.espressif.com/esp32_datasheet_en.html"
+        }
+      }
+    },
+    {
+      "project": {
+        "project_name": "rp2040_control_panel",
+        "notes": "RP2040 控制面板示例",
+        "chip_id": "rp2040",
+        "module_ids": ["rotary_encoder", "button", "buzzer", "oled_i2c"]
+      },
+      "result": {
+        "chip": {
+          "schema_version": 1,
+          "id": "rp2040",
+          "name": "Raspberry Pi Pico (RP2040)",
+          "voltage": "3.3V",
+          "io_voltage": 3.3,
+          "absolute_max_input_voltage": 3.8,
+          "default_max_output_current_ma": 12,
+          "supports_open_drain": true,
+          "pins": [
+            {
+              "name": "GP0",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP1",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP2",
+              "functions": ["GPIO", "I2C1_SDA", "PWM", "EXTI"],
+              "timer": "PWM1",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP3",
+              "functions": ["GPIO", "I2C1_SCL", "PWM", "EXTI"],
+              "timer": "PWM1",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP4",
+              "functions": ["GPIO", "UART_TX", "PWM", "EXTI"],
+              "timer": "PWM2",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP5",
+              "functions": ["GPIO", "UART_RX", "PWM", "EXTI"],
+              "timer": "PWM2",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP6",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM3",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP7",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM3",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP8",
+              "functions": ["GPIO", "SPI1_MISO", "PWM", "EXTI"],
+              "timer": "PWM4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP9",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP10",
+              "functions": ["GPIO", "SPI1_SCK", "PWM", "EXTI"],
+              "timer": "PWM5",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP11",
+              "functions": ["GPIO", "SPI1_MOSI", "PWM", "EXTI"],
+              "timer": "PWM5",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP12",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM6",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP13",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM6",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP14",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM7",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP15",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM7",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP16",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP17",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP18",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM1",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP19",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM1",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP20",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM2",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP21",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM2",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP22",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM3",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP23",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM3",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP24",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP25",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "timer": "PWM4",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP26",
+              "functions": ["GPIO", "EXTI", "ADC"],
+              "adc_channel": "ADC0",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP27",
+              "functions": ["GPIO", "EXTI", "ADC"],
+              "adc_channel": "ADC1",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP28",
+              "functions": ["GPIO", "EXTI", "ADC"],
+              "adc_channel": "ADC2",
+              "tags": [],
+              "note": ""
+            },
+            {
+              "name": "GP29",
+              "functions": ["GPIO", "EXTI", "ADC"],
+              "adc_channel": "ADC3",
+              "tags": [],
+              "note": ""
+            }
+          ],
+          "data_status": "verified",
+          "verified": true,
+          "confidence": "high",
+          "source": "Raspberry Pi RP2040 Datasheet，章节 1.4、2.19、5.2",
+          "datasheet_url": "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf",
+          "machine_checked_at": "2026-08-06",
+          "verified_at": "2026-08-11",
+          "verified_by": "self"
+        },
+        "modules": [
+          {
+            "schema_version": 1,
+            "id": "rotary_encoder",
+            "name": "旋转编码器",
+            "description": "A/B 相位和按压开关输入",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用机械旋转编码器模型",
+            "requirements": [
+              {
+                "module_pin": "A",
+                "function": "EXTI",
+                "direction": "input",
+                "preferred_functions": ["EXTI"]
+              },
+              {
+                "module_pin": "B",
+                "function": "EXTI",
+                "direction": "input",
+                "preferred_functions": ["EXTI"]
+              },
+              {
+                "module_pin": "SW",
+                "function": "GPIO",
+                "direction": "input",
+                "preferred_functions": ["GPIO", "EXTI"]
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "button",
+            "name": "普通按键",
+            "description": "单个 GPIO 按键输入",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用低电平/高电平按键模型",
+            "requirements": [
+              {
+                "module_pin": "KEY",
+                "function": "GPIO",
+                "direction": "input",
+                "preferred_functions": ["GPIO", "EXTI"],
+                "note": "建议配合上拉或下拉电阻"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "buzzer",
+            "name": "蜂鸣器",
+            "description": "有源或无源蜂鸣器控制信号",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用逻辑输入蜂鸣器模型",
+            "requirements": [
+              {
+                "module_pin": "SIG",
+                "function": "PWM",
+                "direction": "output",
+                "drive_current_ma": 4,
+                "preferred_functions": ["PWM"],
+                "avoid_default_high": true,
+                "note": "无源蜂鸣器建议使用 PWM 引脚"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "oled_i2c",
+            "name": "OLED I2C 屏幕",
+            "description": "常见 0.96 寸 I2C OLED 显示屏",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "SSD1306 类 3.3V I2C 显示模块通用模型",
+            "needs_pullup": true,
+            "i2c_bus": "I2C1",
+            "i2c_address": "0x3C",
+            "requirements": [
+              {
+                "module_pin": "SCL",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_scl",
+                "preferred_functions": ["I2C1_SCL"],
+                "note": "I2C 时钟线"
+              },
+              {
+                "module_pin": "SDA",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_sda",
+                "preferred_functions": ["I2C1_SDA"],
+                "note": "I2C 数据线"
+              }
+            ]
+          }
+        ],
+        "allocation": [
+          {
+            "module_id": "rotary_encoder",
+            "module_name": "旋转编码器",
+            "module_pin": "A",
+            "chip_pin": "GP1",
+            "function": "EXTI",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 EXTI",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "rotary_encoder",
+            "module_name": "旋转编码器",
+            "module_pin": "B",
+            "chip_pin": "GP10",
+            "function": "EXTI",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 EXTI",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "rotary_encoder",
+            "module_name": "旋转编码器",
+            "module_pin": "SW",
+            "chip_pin": "GP11",
+            "function": "GPIO",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 GPIO",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "button",
+            "module_name": "普通按键",
+            "module_pin": "KEY",
+            "chip_pin": "GP12",
+            "function": "GPIO",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 GPIO",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "buzzer",
+            "module_name": "蜂鸣器",
+            "module_pin": "SIG",
+            "chip_pin": "GP0",
+            "function": "PWM",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 PWM",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SCL",
+            "chip_pin": "GP3",
+            "function": "I2C1_SCL",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SCL",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SDA",
+            "chip_pin": "GP2",
+            "function": "I2C1_SDA",
+            "direction": "bidirectional",
+            "score": 130,
+            "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SDA",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          }
+        ],
+        "risks": [
+          {
+            "level": "提示",
+            "code": "pullup_required",
+            "message": "OLED I2C 屏幕 使用 I2C，请确认 SDA/SCL 已有合适上拉电阻。",
+            "suggestion": "检查模块板载电阻，并根据总线长度和速率计算等效上拉，上拉电压应不高于 3.8V。",
+            "item": {
+              "module": "OLED I2C 屏幕"
+            },
+            "pin": null,
+            "confidence": "high",
+            "weight": 2.0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "推荐方案",
+            "score": 130.0,
+            "allocation": [
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "A",
+                "chip_pin": "GP1",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "B",
+                "chip_pin": "GP10",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "SW",
+                "chip_pin": "GP11",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "button",
+                "module_name": "普通按键",
+                "module_pin": "KEY",
+                "chip_pin": "GP12",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "buzzer",
+                "module_name": "蜂鸣器",
+                "module_pin": "SIG",
+                "chip_pin": "GP0",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "GP3",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "GP2",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [],
+            "change_count": 0
+          },
+          {
+            "name": "备选方案 1",
+            "score": 130.0,
+            "allocation": [
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "A",
+                "chip_pin": "GP10",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "B",
+                "chip_pin": "GP1",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "rotary_encoder",
+                "module_name": "旋转编码器",
+                "module_pin": "SW",
+                "chip_pin": "GP11",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "button",
+                "module_name": "普通按键",
+                "module_pin": "KEY",
+                "chip_pin": "GP12",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "buzzer",
+                "module_name": "蜂鸣器",
+                "module_pin": "SIG",
+                "chip_pin": "GP0",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "GP3",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "GP2",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [
+              {
+                "module_id": "rotary_encoder",
+                "module_pin": "A",
+                "from": "GP1",
+                "to": "GP10"
+              },
+              {
+                "module_id": "rotary_encoder",
+                "module_pin": "B",
+                "from": "GP10",
+                "to": "GP1"
+              }
+            ],
+            "change_count": 2
+          }
+        ],
+        "solver": {
+          "status": "incomplete",
+          "nodes_searched": 50088,
+          "limit_reached": true,
+          "assigned_count": 7,
+          "total_count": 7,
+          "elapsed_ms": 509.8,
+          "cache_hit": false
+        },
+        "data_trust": {
+          "verified": true,
+          "tier": "verified",
+          "status": "verified",
+          "source": "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf"
+        }
+      }
+    },
+    {
+      "project": {
+        "project_name": "stm32_sensor_board",
+        "notes": "STM32 + OLED + MPU6050 + SD 卡示例",
+        "chip_id": "stm32f103c8t6",
+        "module_ids": ["oled_i2c", "mpu6050", "button", "buzzer", "sd_card"]
+      },
+      "result": {
+        "chip": {
+          "schema_version": 1,
+          "id": "stm32f103c8t6",
+          "name": "STM32F103C8T6",
+          "voltage": "3.3V",
+          "io_voltage": 3.3,
+          "absolute_max_input_voltage": 3.6,
+          "default_max_output_current_ma": 8,
+          "supports_open_drain": true,
+          "pins": [
+            {
+              "name": "PA0",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "通用输入输出 / ADC / 外部中断",
+              "timer": "TIM2",
+              "adc_channel": "IN0"
+            },
+            {
+              "name": "PA1",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "通用输入输出 / ADC / 外部中断",
+              "timer": "TIM2",
+              "adc_channel": "IN1"
+            },
+            {
+              "name": "PA2",
+              "functions": ["GPIO", "USART2_TX", "UART_TX", "PWM", "EXTI"],
+              "tags": [],
+              "note": "USART2 发送",
+              "timer": "TIM2",
+              "adc_channel": "IN2"
+            },
+            {
+              "name": "PA3",
+              "functions": ["GPIO", "USART2_RX", "UART_RX", "ADC", "EXTI"],
+              "tags": [],
+              "note": "USART2 接收",
+              "adc_channel": "IN3"
+            },
+            {
+              "name": "PA4",
+              "functions": ["GPIO", "SPI1_NSS", "ADC", "EXTI"],
+              "tags": [],
+              "note": "SPI1 片选候选",
+              "adc_channel": "IN4"
+            },
+            {
+              "name": "PA5",
+              "functions": ["GPIO", "SPI1_SCK", "ADC", "EXTI"],
+              "tags": [],
+              "note": "SPI1 时钟",
+              "adc_channel": "IN5"
+            },
+            {
+              "name": "PA6",
+              "functions": ["GPIO", "SPI1_MISO", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "SPI1 MISO",
+              "timer": "TIM3",
+              "adc_channel": "IN6"
+            },
+            {
+              "name": "PA7",
+              "functions": ["GPIO", "SPI1_MOSI", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "SPI1 MOSI",
+              "timer": "TIM3",
+              "adc_channel": "IN7"
+            },
+            {
+              "name": "PA8",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "tags": ["default_high"],
+              "note": "高级定时器通道，上电状态需确认",
+              "timer": "TIM1"
+            },
+            {
+              "name": "PA9",
+              "functions": ["GPIO", "USART1_TX", "PWM", "EXTI"],
+              "tags": [],
+              "note": "USART1 发送",
+              "timer": "TIM1"
+            },
+            {
+              "name": "PA10",
+              "functions": ["GPIO", "USART1_RX", "EXTI"],
+              "tags": [],
+              "note": "USART1 接收"
+            },
+            {
+              "name": "PA11",
+              "functions": ["GPIO", "CAN_RX", "USB_DM", "USART1_CTS", "EXTI"],
+              "tags": [],
+              "note": "CAN 接收 / USB D- / USART1 CTS"
+            },
+            {
+              "name": "PA12",
+              "functions": ["GPIO", "CAN_TX", "USB_DP", "USART1_RTS", "EXTI"],
+              "tags": [],
+              "note": "CAN 发送 / USB D+ / USART1 RTS"
+            },
+            {
+              "name": "PA13",
+              "functions": ["GPIO", "SWDIO"],
+              "tags": ["debug"],
+              "note": "SWD 调试数据线"
+            },
+            {
+              "name": "PA14",
+              "functions": ["GPIO", "SWCLK"],
+              "tags": ["debug"],
+              "note": "SWD 调试时钟线"
+            },
+            {
+              "name": "PA15",
+              "functions": ["GPIO", "SPI1_NSS", "EXTI"],
+              "tags": [],
+              "note": "复用调试相关功能，使用前需确认重映射"
+            },
+            {
+              "name": "PB0",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "通用输入输出 / ADC",
+              "timer": "TIM3",
+              "adc_channel": "IN8"
+            },
+            {
+              "name": "PB1",
+              "functions": ["GPIO", "ADC", "PWM", "EXTI"],
+              "tags": [],
+              "note": "通用输入输出 / ADC",
+              "timer": "TIM3",
+              "adc_channel": "IN9"
+            },
+            {
+              "name": "PB2",
+              "functions": ["GPIO", "EXTI"],
+              "tags": ["boot"],
+              "note": "BOOT1 相关引脚"
+            },
+            {
+              "name": "PB5",
+              "functions": ["GPIO", "PWM", "EXTI"],
+              "tags": [],
+              "note": "通用输出候选"
+            },
+            {
+              "name": "PB6",
+              "functions": ["GPIO", "I2C1_SCL", "USART1_TX", "PWM", "EXTI"],
+              "tags": [],
+              "note": "I2C1 时钟",
+              "timer": "TIM4"
+            },
+            {
+              "name": "PB7",
+              "functions": ["GPIO", "I2C1_SDA", "USART1_RX", "PWM", "EXTI"],
+              "tags": [],
+              "note": "I2C1 数据",
+              "timer": "TIM4"
+            },
+            {
+              "name": "PB8",
+              "functions": ["GPIO", "I2C1_SCL", "PWM", "EXTI"],
+              "tags": [],
+              "note": "I2C1 重映射时钟",
+              "timer": "TIM4"
+            },
+            {
+              "name": "PB9",
+              "functions": ["GPIO", "I2C1_SDA", "PWM", "EXTI"],
+              "tags": [],
+              "note": "I2C1 重映射数据",
+              "timer": "TIM4"
+            },
+            {
+              "name": "PB10",
+              "functions": ["GPIO", "USART3_TX", "I2C2_SCL", "PWM", "EXTI"],
+              "tags": [],
+              "note": "I2C2 / USART3"
+            },
+            {
+              "name": "PB11",
+              "functions": ["GPIO", "USART3_RX", "I2C2_SDA", "EXTI"],
+              "tags": [],
+              "note": "I2C2 / USART3"
+            },
+            {
+              "name": "PB12",
+              "functions": ["GPIO", "SPI2_NSS", "EXTI"],
+              "tags": [],
+              "note": "SPI2 片选候选"
+            },
+            {
+              "name": "PB13",
+              "functions": ["GPIO", "SPI2_SCK", "EXTI"],
+              "tags": [],
+              "note": "SPI2 时钟"
+            },
+            {
+              "name": "PB14",
+              "functions": ["GPIO", "SPI2_MISO", "EXTI"],
+              "tags": [],
+              "note": "SPI2 MISO"
+            },
+            {
+              "name": "PB15",
+              "functions": ["GPIO", "SPI2_MOSI", "EXTI"],
+              "tags": [],
+              "note": "SPI2 MOSI"
+            }
+          ],
+          "data_status": "verified",
+          "verified": true,
+          "confidence": "high",
+          "source": "STMicroelectronics STM32F103x8/B DS5319 Rev 20，表 5、36、37",
+          "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32f103t8.pdf",
+          "machine_checked_at": "2026-08-06",
+          "verified_at": "2026-08-11",
+          "verified_by": "self"
+        },
+        "modules": [
+          {
+            "schema_version": 1,
+            "id": "oled_i2c",
+            "name": "OLED I2C 屏幕",
+            "description": "常见 0.96 寸 I2C OLED 显示屏",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "SSD1306 类 3.3V I2C 显示模块通用模型",
+            "needs_pullup": true,
+            "i2c_bus": "I2C1",
+            "i2c_address": "0x3C",
+            "requirements": [
+              {
+                "module_pin": "SCL",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_scl",
+                "preferred_functions": ["I2C1_SCL"],
+                "note": "I2C 时钟线"
+              },
+              {
+                "module_pin": "SDA",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_sda",
+                "preferred_functions": ["I2C1_SDA"],
+                "note": "I2C 数据线"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "mpu6050",
+            "name": "MPU6050 姿态传感器",
+            "description": "I2C 六轴姿态传感器，可选中断引脚",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "MPU-6050 I2C 接口通用模型",
+            "needs_pullup": true,
+            "i2c_bus": "I2C1",
+            "i2c_address": "0x68",
+            "requirements": [
+              {
+                "module_pin": "SCL",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_scl",
+                "preferred_functions": ["I2C1_SCL"],
+                "note": "与 OLED 共用 I2C 时钟"
+              },
+              {
+                "module_pin": "SDA",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "requires_open_drain": true,
+                "share_bus": true,
+                "bus_key": "i2c1_sda",
+                "preferred_functions": ["I2C1_SDA"],
+                "note": "与 OLED 共用 I2C 数据"
+              },
+              {
+                "module_pin": "INT",
+                "function": "EXTI",
+                "direction": "input",
+                "preferred_functions": ["EXTI"],
+                "note": "姿态数据中断输入"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "button",
+            "name": "普通按键",
+            "description": "单个 GPIO 按键输入",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用低电平/高电平按键模型",
+            "requirements": [
+              {
+                "module_pin": "KEY",
+                "function": "GPIO",
+                "direction": "input",
+                "preferred_functions": ["GPIO", "EXTI"],
+                "note": "建议配合上拉或下拉电阻"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "buzzer",
+            "name": "蜂鸣器",
+            "description": "有源或无源蜂鸣器控制信号",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "通用逻辑输入蜂鸣器模型",
+            "requirements": [
+              {
+                "module_pin": "SIG",
+                "function": "PWM",
+                "direction": "output",
+                "drive_current_ma": 4,
+                "preferred_functions": ["PWM"],
+                "avoid_default_high": true,
+                "note": "无源蜂鸣器建议使用 PWM 引脚"
+              }
+            ]
+          },
+          {
+            "schema_version": 1,
+            "id": "sd_card",
+            "name": "SD 卡模块",
+            "description": "SPI 模式 SD 卡模块",
+            "voltage": "3.3V",
+            "logic_voltage": 3.3,
+            "source": "SD 卡 SPI 模式通用接口模型",
+            "spi_bus": "SPI1",
+            "spi_mode": 0,
+            "spi_max_hz": 25000000,
+            "requirements": [
+              {
+                "module_pin": "SCK",
+                "function": "SPI1_SCK",
+                "direction": "output",
+                "share_bus": true,
+                "bus_key": "spi1_sck",
+                "preferred_functions": ["SPI1_SCK"],
+                "note": "SPI 时钟"
+              },
+              {
+                "module_pin": "MISO",
+                "function": "SPI1_MISO",
+                "direction": "input",
+                "share_bus": true,
+                "bus_key": "spi1_miso",
+                "preferred_functions": ["SPI1_MISO"],
+                "note": "SPI 主入从出"
+              },
+              {
+                "module_pin": "MOSI",
+                "function": "SPI1_MOSI",
+                "direction": "output",
+                "share_bus": true,
+                "bus_key": "spi1_mosi",
+                "preferred_functions": ["SPI1_MOSI"],
+                "note": "SPI 主出从入"
+              },
+              {
+                "module_pin": "CS",
+                "function": "GPIO",
+                "direction": "output",
+                "preferred_functions": ["GPIO"],
+                "note": "片选引脚，多个 SPI 设备不可共用"
+              }
+            ]
+          }
+        ],
+        "allocation": [
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SCL",
+            "chip_pin": "PB6",
+            "function": "I2C1_SCL",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SCL",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "oled_i2c",
+            "module_name": "OLED I2C 屏幕",
+            "module_pin": "SDA",
+            "chip_pin": "PB7",
+            "function": "I2C1_SDA",
+            "direction": "bidirectional",
+            "score": 130,
+            "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SDA",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "mpu6050",
+            "module_name": "MPU6050 姿态传感器",
+            "module_pin": "SCL",
+            "chip_pin": "PB6",
+            "function": "I2C1_SCL",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SCL",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "mpu6050",
+            "module_name": "MPU6050 姿态传感器",
+            "module_pin": "SDA",
+            "chip_pin": "PB7",
+            "function": "I2C1_SDA",
+            "direction": "bidirectional",
+            "score": 130,
+            "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 I2C1_SDA",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "mpu6050",
+            "module_name": "MPU6050 姿态传感器",
+            "module_pin": "INT",
+            "chip_pin": "PA1",
+            "function": "EXTI",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 EXTI",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "button",
+            "module_name": "普通按键",
+            "module_pin": "KEY",
+            "chip_pin": "PA10",
+            "function": "GPIO",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 GPIO",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "buzzer",
+            "module_name": "蜂鸣器",
+            "module_pin": "SIG",
+            "chip_pin": "PA0",
+            "function": "PWM",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 PWM",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "sd_card",
+            "module_name": "SD 卡模块",
+            "module_pin": "SCK",
+            "chip_pin": "PA5",
+            "function": "SPI1_SCK",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 SPI1_SCK；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 SPI1_SCK",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "sd_card",
+            "module_name": "SD 卡模块",
+            "module_pin": "MISO",
+            "chip_pin": "PA6",
+            "function": "SPI1_MISO",
+            "direction": "input",
+            "score": 130,
+            "note": "支持 SPI1_MISO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 SPI1_MISO",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "sd_card",
+            "module_name": "SD 卡模块",
+            "module_pin": "MOSI",
+            "chip_pin": "PA7",
+            "function": "SPI1_MOSI",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 SPI1_MOSI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 SPI1_MOSI",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          },
+          {
+            "module_id": "sd_card",
+            "module_name": "SD 卡模块",
+            "module_pin": "CS",
+            "chip_pin": "PA11",
+            "function": "GPIO",
+            "direction": "output",
+            "score": 130,
+            "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+            "locked": false,
+            "kept_existing": false,
+            "reasons": [
+              "支持 GPIO",
+              "避开启动、调试和默认高电平风险脚",
+              "命中模块首选复用功能"
+            ]
+          }
+        ],
+        "risks": [
+          {
+            "level": "提示",
+            "code": "pullup_required",
+            "message": "OLED I2C 屏幕 使用 I2C，请确认 SDA/SCL 已有合适上拉电阻。",
+            "suggestion": "检查模块板载电阻，并根据总线长度和速率计算等效上拉，上拉电压应不高于 3.6V。",
+            "item": {
+              "module": "OLED I2C 屏幕"
+            },
+            "pin": null,
+            "confidence": "high",
+            "weight": 2.0
+          },
+          {
+            "level": "提示",
+            "code": "pullup_required",
+            "message": "MPU6050 姿态传感器 使用 I2C，请确认 SDA/SCL 已有合适上拉电阻。",
+            "suggestion": "检查模块板载电阻，并根据总线长度和速率计算等效上拉，上拉电压应不高于 3.6V。",
+            "item": {
+              "module": "MPU6050 姿态传感器"
+            },
+            "pin": null,
+            "confidence": "high",
+            "weight": 2.0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "推荐方案",
+            "score": 130.0,
+            "allocation": [
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "PB6",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "PB7",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "SCL",
+                "chip_pin": "PB6",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "SDA",
+                "chip_pin": "PB7",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "INT",
+                "chip_pin": "PA1",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "button",
+                "module_name": "普通按键",
+                "module_pin": "KEY",
+                "chip_pin": "PA10",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "buzzer",
+                "module_name": "蜂鸣器",
+                "module_pin": "SIG",
+                "chip_pin": "PA0",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "SCK",
+                "chip_pin": "PA5",
+                "function": "SPI1_SCK",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 SPI1_SCK；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_SCK",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "MISO",
+                "chip_pin": "PA6",
+                "function": "SPI1_MISO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 SPI1_MISO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_MISO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "MOSI",
+                "chip_pin": "PA7",
+                "function": "SPI1_MOSI",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 SPI1_MOSI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_MOSI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "CS",
+                "chip_pin": "PA11",
+                "function": "GPIO",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [],
+            "change_count": 0
+          },
+          {
+            "name": "备选方案 1",
+            "score": 130.0,
+            "allocation": [
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SCL",
+                "chip_pin": "PB8",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "oled_i2c",
+                "module_name": "OLED I2C 屏幕",
+                "module_pin": "SDA",
+                "chip_pin": "PB7",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "SCL",
+                "chip_pin": "PB8",
+                "function": "I2C1_SCL",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 I2C1_SCL；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SCL",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "SDA",
+                "chip_pin": "PB7",
+                "function": "I2C1_SDA",
+                "direction": "bidirectional",
+                "score": 130,
+                "note": "支持 I2C1_SDA；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 I2C1_SDA",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "mpu6050",
+                "module_name": "MPU6050 姿态传感器",
+                "module_pin": "INT",
+                "chip_pin": "PA1",
+                "function": "EXTI",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 EXTI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 EXTI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "button",
+                "module_name": "普通按键",
+                "module_pin": "KEY",
+                "chip_pin": "PA10",
+                "function": "GPIO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "buzzer",
+                "module_name": "蜂鸣器",
+                "module_pin": "SIG",
+                "chip_pin": "PA0",
+                "function": "PWM",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 PWM；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 PWM",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "SCK",
+                "chip_pin": "PA5",
+                "function": "SPI1_SCK",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 SPI1_SCK；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_SCK",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "MISO",
+                "chip_pin": "PA6",
+                "function": "SPI1_MISO",
+                "direction": "input",
+                "score": 130,
+                "note": "支持 SPI1_MISO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_MISO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "MOSI",
+                "chip_pin": "PA7",
+                "function": "SPI1_MOSI",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 SPI1_MOSI；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 SPI1_MOSI",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              },
+              {
+                "module_id": "sd_card",
+                "module_name": "SD 卡模块",
+                "module_pin": "CS",
+                "chip_pin": "PA11",
+                "function": "GPIO",
+                "direction": "output",
+                "score": 130,
+                "note": "支持 GPIO；避开启动、调试和默认高电平风险脚；命中模块首选复用功能",
+                "locked": false,
+                "kept_existing": false,
+                "reasons": [
+                  "支持 GPIO",
+                  "避开启动、调试和默认高电平风险脚",
+                  "命中模块首选复用功能"
+                ]
+              }
+            ],
+            "changes": [
+              {
+                "module_id": "oled_i2c",
+                "module_pin": "SCL",
+                "from": "PB6",
+                "to": "PB8"
+              },
+              {
+                "module_id": "mpu6050",
+                "module_pin": "SCL",
+                "from": "PB6",
+                "to": "PB8"
+              }
+            ],
+            "change_count": 2
+          }
+        ],
+        "solver": {
+          "status": "incomplete",
+          "nodes_searched": 50048,
+          "limit_reached": true,
+          "assigned_count": 11,
+          "total_count": 11,
+          "elapsed_ms": 553.06,
+          "cache_hit": false
+        },
+        "data_trust": {
+          "verified": true,
+          "tier": "verified",
+          "status": "verified",
+          "source": "https://www.st.com/resource/en/datasheet/stm32f103t8.pdf"
+        }
+      }
+    }
+  ]
+}

@@ -60,7 +60,39 @@ function payload() {
     strategy: $("strategySelect").value,
     include_alternatives: true,
     alternative_count: 3,
+    signal_mapping: readSignalMapping(),
   };
+}
+
+function readSignalMapping() {
+  try {
+    return JSON.parse(
+      localStorage.getItem("embedpindoctor.signalMapping") || "{}",
+    );
+  } catch {
+    return {};
+  }
+}
+
+function mappingText(mapping = readSignalMapping()) {
+  return Object.entries(mapping)
+    .map(([source, target]) => `${source} = ${target}`)
+    .join("\n");
+}
+
+function saveSignalMapping() {
+  const mapping = {};
+  $("signalMappingInput")
+    .value.split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .forEach((line) => {
+      const [source, target] = line.split("=").map((item) => item.trim());
+      if (source && target) mapping[source] = target;
+    });
+  localStorage.setItem("embedpindoctor.signalMapping", JSON.stringify(mapping));
+  if ($("projectPath").value.trim()) recheck().catch(handleError);
+  else showToast(t("saveMapping"), `${Object.keys(mapping).length}`);
 }
 
 async function loadChips() {
@@ -152,7 +184,24 @@ function renderAllocation() {
       else delete state.locks[input.dataset.key];
     }),
   );
+  document.querySelectorAll("#allocationBody tr").forEach((row, index) =>
+    row.addEventListener("click", (event) => {
+      if (event.target.closest("input,label")) return;
+      showAllocationEvidence(state.allocation[index]);
+    }),
+  );
   renderWiringDiagram();
+}
+
+function showAllocationEvidence(item) {
+  $("allocationEvidence").classList.remove("hidden");
+  $("allocationEvidenceTitle").textContent =
+    `${item.module_name} ${item.module_pin} → ${item.chip_pin}`;
+  const reasons = item.reasons?.length
+    ? item.reasons
+    : [item.note || "当前约束下的最佳候选"];
+  $("allocationEvidenceBody").innerHTML =
+    `<div class="evidence-score"><strong>${item.score ?? "—"}</strong><span>${t("pinScore")}</span></div><ul>${reasons.map((reason) => `<li>✓ ${escapeHtml(reason)}</li>`).join("")}</ul><dl><div><dt>Function</dt><dd>${escapeHtml(item.function)}</dd></div><div><dt>Direction</dt><dd>${escapeHtml(item.direction)}</dd></div><div><dt>Solver</dt><dd>${escapeHtml(state.solver?.status || "—")} · ${state.solver?.elapsed_ms ?? "—"}ms${state.solver?.cache_hit ? " · cache" : ""}</dd></div></dl>`;
 }
 
 function renderWiringDiagram() {
@@ -733,30 +782,8 @@ async function loadEcosystem() {
   );
 }
 
-const builtInExamples = {
-  esp32_iot_node: {
-    project_name: "esp32_iot_node",
-    notes: "ESP32 Wi-Fi IoT node with OLED, LoRa telemetry and status LEDs.",
-    chip_id: "esp32-wroom-32",
-    module_ids: ["oled_i2c", "analog_sensor", "lorawan_uart", "ws2812"],
-  },
-  stm32_sensor_board: {
-    project_name: "stm32_sensor_board",
-    notes:
-      "STM32 sensor acquisition board with IMU, local display and SD logging.",
-    chip_id: "stm32f103c8t6",
-    module_ids: ["oled_i2c", "mpu6050", "button", "buzzer", "sd_card"],
-  },
-  rp2040_control_panel: {
-    project_name: "rp2040_control_panel",
-    notes: "RP2040 operator panel with rotary encoder, keys, buzzer and OLED.",
-    chip_id: "rp2040",
-    module_ids: ["rotary_encoder", "button", "buzzer", "oled_i2c"],
-  },
-};
-
 async function loadExample(exampleId) {
-  const example = builtInExamples[exampleId];
+  const example = window.WorkbenchExamples.get(exampleId);
   if (!example) return;
   $("projectName").value = example.project_name;
   $("notes").value = example.notes;
@@ -777,20 +804,7 @@ async function loadExample(exampleId) {
 }
 
 function showResultView(targetName) {
-  document
-    .querySelectorAll(".view-tab")
-    .forEach((button) =>
-      button.classList.toggle(
-        "active",
-        button.dataset.viewTarget === targetName,
-      ),
-    );
-  document
-    .querySelectorAll(".result-view")
-    .forEach((view) =>
-      view.classList.toggle("active", view.dataset.resultView === targetName),
-    );
-  if (targetName === "pinDetailsSection") $("pinDetailsSection").open = true;
+  window.WorkbenchViews.show(targetName);
 }
 
 async function installEcosystemPackage() {
@@ -903,6 +917,11 @@ function bindEvents() {
   $("evidenceBtn").addEventListener("click", showEvidence);
   $("createProjectBtn").addEventListener("click", createFromWizard);
   $("exportDiagramBtn").addEventListener("click", exportDiagram);
+  $("signalMappingInput").value = mappingText();
+  $("saveSignalMappingBtn").addEventListener("click", saveSignalMapping);
+  $("closeAllocationEvidence").addEventListener("click", () =>
+    $("allocationEvidence").classList.add("hidden"),
+  );
   document
     .querySelectorAll(".example-card")
     .forEach((card) =>

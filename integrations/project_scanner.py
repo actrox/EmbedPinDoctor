@@ -234,12 +234,15 @@ def scan_project(project_path):
     }
 
 
-def compare_scan(scan, chip, allocation):
+def compare_scan(scan, chip, allocation, signal_mapping=None):
     risks = []
     valid_pins = {pin["name"] for pin in chip["pins"]}
     by_symbol = defaultdict(list)
     by_pin = defaultdict(list)
-    for use in scan["pin_uses"]:
+    signal_mapping = { _normal_symbol(key): _normal_symbol(value) for key, value in (signal_mapping or {}).items() }
+    for original in scan["pin_uses"]:
+        use = dict(original)
+        use["symbol"] = signal_mapping.get(use["symbol"], use["symbol"])
         by_symbol[use["symbol"]].append(use)
         by_pin[use["pin"]].append(use)
         if use["pin"] not in valid_pins:
@@ -275,6 +278,7 @@ def compare_scan(scan, chip, allocation):
         "unmatched_doctor_symbols": sorted(set(doctor) - set(by_symbol)),
         "match_rate": round(matched / max(1, len(doctor)) * 100, 1),
         "signal_aliases_applied": SIGNAL_ALIASES,
+        "user_signal_mapping": signal_mapping,
     }
 
 

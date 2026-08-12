@@ -470,6 +470,26 @@
                     <summary>查看扫描到的引脚来源</summary>
                     <div id="scanSourceList" class="scan-source-list"></div>
                   </details>
+                  <details class="signal-mapping-panel">
+                    <summary data-i18n="signalMapping">信号映射</summary>
+                    <p data-i18n="signalMappingHint">
+                      将项目中的自定义符号映射到医生信号，每行格式：MY_CLOCK =
+                      OLED_I2C_SCL
+                    </p>
+                    <textarea
+                      id="signalMappingInput"
+                      class="control mono-control"
+                      placeholder="DISPLAY_CLK = OLED_I2C_SCL"
+                    ></textarea>
+                    <button
+                      id="saveSignalMappingBtn"
+                      class="button dark"
+                      type="button"
+                      data-i18n="saveMapping"
+                    >
+                      保存映射并复检
+                    </button>
+                  </details>
                 </section>
 
                 <section id="diagnosisSection" class="diagnosis-section">
@@ -538,6 +558,15 @@
                 class="result-view"
                 data-result-view="pinDetailsSection"
               >
+                <aside
+                  id="allocationEvidence"
+                  class="allocation-evidence hidden"
+                >
+                  <button id="closeAllocationEvidence" type="button">×</button>
+                  <span class="mini-step">ALLOCATION EVIDENCE</span>
+                  <h3 id="allocationEvidenceTitle">分配依据</h3>
+                  <div id="allocationEvidenceBody"></div>
+                </aside>
                 <details id="pinDetailsSection" class="pin-section" open>
                   <summary>
                     <span
@@ -653,6 +682,8 @@
     </dialog>
     <script src="./i18n.js"></script>
     <script src="./demo.js"></script>
+    <script src="./views.js"></script>
+    <script src="./examples.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

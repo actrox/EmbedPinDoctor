@@ -13,6 +13,8 @@
     "absolute_max_input_voltage": {"type": "number", "exclusiveMinimum": 0},
     "default_max_output_current_ma": {"type": "number", "minimum": 0},
     "supports_open_drain": {"type": "boolean"},
+    "board_power_budget_ma": {"type": "number", "minimum": 0},
+    "adc_max_input_voltage": {"type": "number", "minimum": 0},
     "pins": {
       "type": "array", "minItems": 1,
       "items": {

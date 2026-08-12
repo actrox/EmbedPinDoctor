@@ -44,6 +44,14 @@ class TestProjectScanner(unittest.TestCase):
         comparison = compare_scan(scan, chip, allocation)
         self.assertEqual(comparison["match_rate"], 100.0)
 
+    def test_user_signal_mapping(self):
+        scan = {"pin_uses": [{"symbol": "MY_CLOCK", "pin": "PB6", "source": "x.h", "line": 1, "kind": "code", "snippet": "#define MY_CLOCK PB6"}]}
+        chip = {"name": "Test", "pins": [{"name": "PB6"}]}
+        allocation = [{"module_id": "oled_i2c", "module_pin": "SCL", "chip_pin": "PB6"}]
+        comparison = compare_scan(scan, chip, allocation, {"MY_CLOCK": "OLED_I2C_SCL"})
+        self.assertEqual(comparison["match_rate"], 100.0)
+        self.assertEqual(comparison["user_signal_mapping"]["MY_CLOCK"], "OLED_I2C_SCL")
+
 
 if __name__ == "__main__":
     unittest.main()
