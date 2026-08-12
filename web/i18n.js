@@ -21,6 +21,8 @@ const messages = {
     reset: "重置",
     projectName: "项目名称",
     platformQuickPick: "硬件平台快捷选择",
+    defaultExamples: "默认示例",
+    exampleLoaded: "示例已载入",
     requirements: "产品需求定义",
     requirementsPlaceholder:
       "描述产品、需要的传感器、通信方式、电源与调试要求…",
@@ -140,6 +142,8 @@ const messages = {
     reset: "Reset",
     projectName: "Project name",
     platformQuickPick: "Hardware platform",
+    defaultExamples: "Starter examples",
+    exampleLoaded: "Example loaded",
     requirements: "Product requirements",
     requirementsPlaceholder:
       "Describe the product, sensors, connectivity, power, and debugging requirements…",

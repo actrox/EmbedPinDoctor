@@ -1481,6 +1481,64 @@ main {
   background: #171f34;
   color: #a29aff;
 }
+.example-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 4px 0 9px;
+  color: #cbd3e5;
+  font-size: 12px;
+}
+.example-list {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+.example-card {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #29334d;
+  border-radius: 6px;
+  color: #dfe5f1;
+  background: #0b1220;
+  text-align: left;
+  cursor: pointer;
+}
+.example-card:hover,
+.example-card.active {
+  border-color: #6f63ff;
+  background: rgba(91, 77, 229, 0.12);
+}
+.example-card > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 30px;
+  border-radius: 4px;
+  background: #19213a;
+  color: #9d94ff;
+  font: 9px monospace;
+}
+.example-card strong,
+.example-card small {
+  display: block;
+}
+.example-card strong {
+  font-size: 11px;
+}
+.example-card small {
+  color: #707d95;
+  font-size: 9px;
+  margin-top: 2px;
+}
+.example-card i {
+  color: #8075ff;
+  font-style: normal;
+}
 .notes-disclosure textarea {
   min-height: 120px;
   resize: vertical;
@@ -1596,6 +1654,29 @@ main {
 }
 #resultContent {
   padding: 26px 28px 60px;
+}
+.result-view {
+  display: none;
+  animation: view-enter 0.22s ease;
+}
+.result-view.active {
+  display: block;
+}
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.result-view .score-card {
+  margin-top: 0;
+}
+.result-view .pin-section {
+  margin-top: 0;
 }
 .wiring-section {
   border: 1px solid #263049;

@@ -11,6 +11,17 @@ const demoModules = [
   { id: "buzzer", name: "Passive buzzer", description: "PWM output" },
   { id: "sd_card", name: "SD card", description: "SPI storage" },
   { id: "ws2812", name: "WS2812 strip", description: "Single-wire LED" },
+  {
+    id: "rotary_encoder",
+    name: "Rotary encoder",
+    description: "Quadrature user input",
+  },
+  {
+    id: "analog_sensor",
+    name: "Analog sensor",
+    description: "ADC measurement",
+  },
+  { id: "lorawan_uart", name: "LoRaWAN module", description: "UART telemetry" },
 ];
 
 const demoAllocation = [
@@ -20,6 +31,12 @@ const demoAllocation = [
   ["mpu6050", "MPU-6050", "SDA", "PB7", "I2C1_SDA", 92],
   ["button", "Push button", "KEY", "PA1", "GPIO", 88],
   ["buzzer", "Passive buzzer", "PWM", "PA8", "PWM", 86],
+  ["rotary_encoder", "Rotary encoder", "A", "PA0", "GPIO", 88],
+  ["rotary_encoder", "Rotary encoder", "B", "PA1", "GPIO", 88],
+  ["analog_sensor", "Analog sensor", "AO", "PA0", "ADC", 90],
+  ["lorawan_uart", "LoRaWAN module", "TX", "PA10", "UART_RX", 87],
+  ["lorawan_uart", "LoRaWAN module", "RX", "PA9", "UART_TX", 87],
+  ["ws2812", "WS2812 strip", "DIN", "PB0", "GPIO", 84],
 ].map(([module_id, module_name, module_pin, chip_pin, func, score]) => ({
   module_id,
   module_name,
@@ -64,31 +81,36 @@ async function demoApi(path, options = {}) {
     const request = options.body ? JSON.parse(options.body) : {};
     const selectedChip =
       demoChips.find((chip) => chip.id === request.chip_id) || demoChips[0];
+    const requestedModules =
+      request.module_ids || demoModules.slice(0, 4).map((item) => item.id);
+    const selectedAllocation = demoAllocation.filter((item) =>
+      requestedModules.includes(item.module_id),
+    );
     return {
       chip: selectedChip,
-      modules: demoModules.slice(0, 4),
-      allocation: demoAllocation,
+      modules: demoModules.filter((item) => requestedModules.includes(item.id)),
+      allocation: selectedAllocation,
       risks: demoRisks,
       alternatives: [
         {
           name: "Balanced low-risk plan",
           score: 91,
           change_count: 0,
-          allocation: demoAllocation,
+          allocation: selectedAllocation,
         },
         {
           name: "Debug-port preserving plan",
           score: 88,
           change_count: 2,
-          allocation: demoAllocation.map((item) => ({ ...item })),
+          allocation: selectedAllocation.map((item) => ({ ...item })),
         },
       ],
       solver: {
         status: "optimal",
         nodes_searched: 128,
         limit_reached: false,
-        assigned_count: demoAllocation.length,
-        total_count: demoAllocation.length,
+        assigned_count: selectedAllocation.length,
+        total_count: selectedAllocation.length,
       },
       data_trust: {
         verified: selectedChip.id === "stm32f103c8t6",

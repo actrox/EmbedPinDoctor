@@ -733,6 +733,66 @@ async function loadEcosystem() {
   );
 }
 
+const builtInExamples = {
+  esp32_iot_node: {
+    project_name: "esp32_iot_node",
+    notes: "ESP32 Wi-Fi IoT node with OLED, LoRa telemetry and status LEDs.",
+    chip_id: "esp32-wroom-32",
+    module_ids: ["oled_i2c", "analog_sensor", "lorawan_uart", "ws2812"],
+  },
+  stm32_sensor_board: {
+    project_name: "stm32_sensor_board",
+    notes:
+      "STM32 sensor acquisition board with IMU, local display and SD logging.",
+    chip_id: "stm32f103c8t6",
+    module_ids: ["oled_i2c", "mpu6050", "button", "buzzer", "sd_card"],
+  },
+  rp2040_control_panel: {
+    project_name: "rp2040_control_panel",
+    notes: "RP2040 operator panel with rotary encoder, keys, buzzer and OLED.",
+    chip_id: "rp2040",
+    module_ids: ["rotary_encoder", "button", "buzzer", "oled_i2c"],
+  },
+};
+
+async function loadExample(exampleId) {
+  const example = builtInExamples[exampleId];
+  if (!example) return;
+  $("projectName").value = example.project_name;
+  $("notes").value = example.notes;
+  $("chipSelect").value = example.chip_id;
+  syncPlatformCards();
+  document.querySelectorAll(".module-check").forEach((check) => {
+    check.checked = example.module_ids.includes(check.value);
+  });
+  updateSelectedCount();
+  document
+    .querySelectorAll(".example-card")
+    .forEach((card) =>
+      card.classList.toggle("active", card.dataset.example === exampleId),
+    );
+  await allocate();
+  showResultView("wiringSection");
+  showToast(t("exampleLoaded"), example.project_name);
+}
+
+function showResultView(targetName) {
+  document
+    .querySelectorAll(".view-tab")
+    .forEach((button) =>
+      button.classList.toggle(
+        "active",
+        button.dataset.viewTarget === targetName,
+      ),
+    );
+  document
+    .querySelectorAll(".result-view")
+    .forEach((view) =>
+      view.classList.toggle("active", view.dataset.resultView === targetName),
+    );
+  if (targetName === "pinDetailsSection") $("pinDetailsSection").open = true;
+}
+
 async function installEcosystemPackage() {
   const packageDir = $("ecosystemPath").value.trim();
   if (!packageDir) throw new Error("请填写扩展包目录");
@@ -843,6 +903,13 @@ function bindEvents() {
   $("evidenceBtn").addEventListener("click", showEvidence);
   $("createProjectBtn").addEventListener("click", createFromWizard);
   $("exportDiagramBtn").addEventListener("click", exportDiagram);
+  document
+    .querySelectorAll(".example-card")
+    .forEach((card) =>
+      card.addEventListener("click", () =>
+        loadExample(card.dataset.example).catch(handleError),
+      ),
+    );
   [
     ["exportPinsBtn", "pins"],
     ["exportArduinoBtn", "arduino"],
@@ -861,16 +928,13 @@ function bindEvents() {
       renderRisks();
     }),
   );
-  document.querySelectorAll(".view-tab").forEach((button) =>
-    button.addEventListener("click", () => {
-      document
-        .querySelectorAll(".view-tab")
-        .forEach((item) => item.classList.toggle("active", item === button));
-      const target = $(button.dataset.viewTarget);
-      if (target?.tagName === "DETAILS") target.open = true;
-      target?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }),
-  );
+  document
+    .querySelectorAll(".view-tab")
+    .forEach((button) =>
+      button.addEventListener("click", () =>
+        showResultView(button.dataset.viewTarget),
+      ),
+    );
 }
 
 function handleError(error) {

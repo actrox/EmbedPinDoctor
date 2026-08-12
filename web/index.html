@@ -134,6 +134,49 @@
               </button>
             </div>
 
+            <div class="example-heading">
+              <span class="mini-step">EXAMPLES</span>
+              <strong data-i18n="defaultExamples">默认示例</strong>
+            </div>
+            <div id="exampleList" class="example-list">
+              <button
+                class="example-card"
+                type="button"
+                data-example="esp32_iot_node"
+              >
+                <span>IoT</span>
+                <div>
+                  <strong>ESP32 IoT Node</strong
+                  ><small>OLED · LoRa · WS2812</small>
+                </div>
+                <i>→</i>
+              </button>
+              <button
+                class="example-card"
+                type="button"
+                data-example="stm32_sensor_board"
+              >
+                <span>MCU</span>
+                <div>
+                  <strong>STM32 Sensor Board</strong
+                  ><small>OLED · IMU · SD Card</small>
+                </div>
+                <i>→</i>
+              </button>
+              <button
+                class="example-card"
+                type="button"
+                data-example="rp2040_control_panel"
+              >
+                <span>UI</span>
+                <div>
+                  <strong>RP2040 Control Panel</strong
+                  ><small>Encoder · Button · OLED</small>
+                </div>
+                <i>→</i>
+              </button>
+            </div>
+
             <label class="field-label" for="projectPath"
               ><span data-i18n="existingProject">现有工程目录</span>
               <span class="optional-label" data-i18n="optional"
@@ -320,194 +363,223 @@
             </div>
 
             <div id="resultContent">
-              <section id="wiringSection" class="wiring-section">
-                <div class="wiring-heading">
-                  <div>
-                    <span class="wiring-kicker">SYSTEM ARCHITECTURE</span>
-                    <h3 data-i18n="architectureTitle">系统架构图</h3>
-                    <p data-i18n="architectureCopy">
-                      主控、外设与已分配引脚的可视化连接
-                    </p>
+              <section
+                id="wiringView"
+                class="result-view active"
+                data-result-view="wiringSection"
+              >
+                <section id="wiringSection" class="wiring-section">
+                  <div class="wiring-heading">
+                    <div>
+                      <span class="wiring-kicker">SYSTEM ARCHITECTURE</span>
+                      <h3 data-i18n="architectureTitle">系统架构图</h3>
+                      <p data-i18n="architectureCopy">
+                        主控、外设与已分配引脚的可视化连接
+                      </p>
+                    </div>
+                    <div class="wiring-legend">
+                      <span
+                        ><i class="legend-dot data"></i
+                        ><b data-i18n="dataSignal">数据信号</b></span
+                      >
+                      <span
+                        ><i class="legend-dot power"></i
+                        ><b data-i18n="power">电源</b></span
+                      >
+                      <span
+                        ><i class="legend-dot safe"></i
+                        ><b data-i18n="lowRisk">低风险</b></span
+                      >
+                    </div>
                   </div>
-                  <div class="wiring-legend">
-                    <span
-                      ><i class="legend-dot data"></i
-                      ><b data-i18n="dataSignal">数据信号</b></span
-                    >
-                    <span
-                      ><i class="legend-dot power"></i
-                      ><b data-i18n="power">电源</b></span
-                    >
-                    <span
-                      ><i class="legend-dot safe"></i
-                      ><b data-i18n="lowRisk">低风险</b></span
-                    >
-                  </div>
-                </div>
-                <div id="wiringCanvas" class="wiring-canvas"></div>
-                <div class="diagram-actions">
-                  <button
-                    id="exportDiagramBtn"
-                    type="button"
-                    data-i18n="exportDiagram"
-                  >
-                    导出 SVG 架构图</button
-                  ><small data-i18n="diagramHint">点击模块可高亮相关连线</small>
-                </div>
-              </section>
-
-              <section class="score-card">
-                <div class="score-ring" id="scoreRing">
-                  <div>
-                    <strong id="healthScore">—</strong><span>/ 100</span>
-                  </div>
-                </div>
-                <div class="score-copy">
-                  <p class="eyebrow">PROJECT HEALTH</p>
-                  <h3 id="healthTitle" data-i18n="preparing">正在准备诊断…</h3>
-                  <p id="healthSummary" data-i18n="reading">
-                    正在读取当前项目配置。
-                  </p>
-                </div>
-                <div class="severity-stats">
-                  <div>
-                    <span class="severity-dot error"></span
-                    ><strong id="errorCount">0</strong
-                    ><small data-i18n="errors">严重问题</small>
-                  </div>
-                  <div>
-                    <span class="severity-dot warning"></span
-                    ><strong id="warningCount">0</strong
-                    ><small data-i18n="warnings">需要注意</small>
-                  </div>
-                  <div>
-                    <span class="severity-dot tip"></span
-                    ><strong id="tipCount">0</strong
-                    ><small data-i18n="tips">优化建议</small>
-                  </div>
-                </div>
-              </section>
-
-              <section id="scanOverview" class="scan-overview hidden">
-                <div class="scan-overview-title">
-                  <span class="step">SCAN</span>
-                  <div>
-                    <strong id="scanProjectTypes">已识别工程</strong
-                    ><small id="scanRoot"></small>
-                  </div>
-                </div>
-                <div class="scan-metrics">
-                  <div>
-                    <strong id="scanFileCount">0</strong><span>扫描文件</span>
-                  </div>
-                  <div>
-                    <strong id="scanPinCount">0</strong><span>引脚引用</span>
-                  </div>
-                  <div>
-                    <strong id="scanMatchCount">0</strong><span>方案匹配</span>
-                  </div>
-                </div>
-                <details>
-                  <summary>查看扫描到的引脚来源</summary>
-                  <div id="scanSourceList" class="scan-source-list"></div>
-                </details>
-              </section>
-
-              <section id="diagnosisSection" class="diagnosis-section">
-                <div class="section-heading">
-                  <div>
-                    <h3 data-i18n="issues">发现的问题</h3>
-                    <span id="issueTotal">0 项</span>
-                  </div>
-                  <div class="filter-group" role="group" aria-label="问题筛选">
+                  <div id="wiringCanvas" class="wiring-canvas"></div>
+                  <div class="diagram-actions">
                     <button
-                      class="filter active"
-                      data-filter="all"
-                      data-i18n="all"
+                      id="exportDiagramBtn"
+                      type="button"
+                      data-i18n="exportDiagram"
                     >
-                      全部
-                    </button>
-                    <button
-                      class="filter"
-                      data-filter="错误"
-                      data-i18n="severe"
+                      导出 SVG 架构图</button
+                    ><small data-i18n="diagramHint"
+                      >点击模块可高亮相关连线</small
                     >
-                      严重
-                    </button>
-                    <button
-                      class="filter"
-                      data-filter="警告"
-                      data-i18n="caution"
-                    >
-                      注意
-                    </button>
-                    <button
-                      class="filter"
-                      data-filter="提示"
-                      data-i18n="advice"
-                    >
-                      建议
-                    </button>
                   </div>
-                </div>
-                <div id="riskList" class="risk-list"></div>
+                </section>
               </section>
 
               <section
-                id="alternativeSection"
-                class="alternative-section hidden"
+                id="diagnosisView"
+                class="result-view"
+                data-result-view="diagnosisSection"
               >
-                <div class="section-heading">
-                  <div>
-                    <h3 data-i18n="plans">可行方案</h3>
-                    <span id="alternativeCount">0 套</span>
+                <section class="score-card">
+                  <div class="score-ring" id="scoreRing">
+                    <div>
+                      <strong id="healthScore">—</strong><span>/ 100</span>
+                    </div>
                   </div>
-                  <small data-i18n="planHint">选择方案后可继续锁定和复检</small>
-                </div>
-                <div id="alternativeList" class="alternative-list"></div>
+                  <div class="score-copy">
+                    <p class="eyebrow">PROJECT HEALTH</p>
+                    <h3 id="healthTitle" data-i18n="preparing">
+                      正在准备诊断…
+                    </h3>
+                    <p id="healthSummary" data-i18n="reading">
+                      正在读取当前项目配置。
+                    </p>
+                  </div>
+                  <div class="severity-stats">
+                    <div>
+                      <span class="severity-dot error"></span
+                      ><strong id="errorCount">0</strong
+                      ><small data-i18n="errors">严重问题</small>
+                    </div>
+                    <div>
+                      <span class="severity-dot warning"></span
+                      ><strong id="warningCount">0</strong
+                      ><small data-i18n="warnings">需要注意</small>
+                    </div>
+                    <div>
+                      <span class="severity-dot tip"></span
+                      ><strong id="tipCount">0</strong
+                      ><small data-i18n="tips">优化建议</small>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="scanOverview" class="scan-overview hidden">
+                  <div class="scan-overview-title">
+                    <span class="step">SCAN</span>
+                    <div>
+                      <strong id="scanProjectTypes">已识别工程</strong
+                      ><small id="scanRoot"></small>
+                    </div>
+                  </div>
+                  <div class="scan-metrics">
+                    <div>
+                      <strong id="scanFileCount">0</strong><span>扫描文件</span>
+                    </div>
+                    <div>
+                      <strong id="scanPinCount">0</strong><span>引脚引用</span>
+                    </div>
+                    <div>
+                      <strong id="scanMatchCount">0</strong
+                      ><span>方案匹配</span>
+                    </div>
+                  </div>
+                  <details>
+                    <summary>查看扫描到的引脚来源</summary>
+                    <div id="scanSourceList" class="scan-source-list"></div>
+                  </details>
+                </section>
+
+                <section id="diagnosisSection" class="diagnosis-section">
+                  <div class="section-heading">
+                    <div>
+                      <h3 data-i18n="issues">发现的问题</h3>
+                      <span id="issueTotal">0 项</span>
+                    </div>
+                    <div
+                      class="filter-group"
+                      role="group"
+                      aria-label="问题筛选"
+                    >
+                      <button
+                        class="filter active"
+                        data-filter="all"
+                        data-i18n="all"
+                      >
+                        全部
+                      </button>
+                      <button
+                        class="filter"
+                        data-filter="错误"
+                        data-i18n="severe"
+                      >
+                        严重
+                      </button>
+                      <button
+                        class="filter"
+                        data-filter="警告"
+                        data-i18n="caution"
+                      >
+                        注意
+                      </button>
+                      <button
+                        class="filter"
+                        data-filter="提示"
+                        data-i18n="advice"
+                      >
+                        建议
+                      </button>
+                    </div>
+                  </div>
+                  <div id="riskList" class="risk-list"></div>
+                </section>
+
+                <section
+                  id="alternativeSection"
+                  class="alternative-section hidden"
+                >
+                  <div class="section-heading">
+                    <div>
+                      <h3 data-i18n="plans">可行方案</h3>
+                      <span id="alternativeCount">0 套</span>
+                    </div>
+                    <small data-i18n="planHint"
+                      >选择方案后可继续锁定和复检</small
+                    >
+                  </div>
+                  <div id="alternativeList" class="alternative-list"></div>
+                </section>
               </section>
 
-              <details id="pinDetailsSection" class="pin-section">
-                <summary>
-                  <span
-                    ><strong data-i18n="pinDetails">引脚分配详情</strong
-                    ><small id="allocationSummary">0 条连接</small></span
-                  ><span>↓</span>
-                </summary>
-                <div class="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th data-i18n="lock">锁定</th>
-                        <th data-i18n="moduleSignal">模块 / 信号</th>
-                        <th data-i18n="controllerPin">主控引脚</th>
-                        <th data-i18n="function">功能</th>
-                        <th data-i18n="score">评分</th>
-                        <th data-i18n="reason">选择理由</th>
-                      </tr>
-                    </thead>
-                    <tbody id="allocationBody"></tbody>
-                  </table>
-                </div>
-              </details>
+              <section
+                id="pinTableView"
+                class="result-view"
+                data-result-view="pinDetailsSection"
+              >
+                <details id="pinDetailsSection" class="pin-section" open>
+                  <summary>
+                    <span
+                      ><strong data-i18n="pinDetails">引脚分配详情</strong
+                      ><small id="allocationSummary">0 条连接</small></span
+                    ><span>↓</span>
+                  </summary>
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th data-i18n="lock">锁定</th>
+                          <th data-i18n="moduleSignal">模块 / 信号</th>
+                          <th data-i18n="controllerPin">主控引脚</th>
+                          <th data-i18n="function">功能</th>
+                          <th data-i18n="score">评分</th>
+                          <th data-i18n="reason">选择理由</th>
+                        </tr>
+                      </thead>
+                      <tbody id="allocationBody"></tbody>
+                    </table>
+                  </div>
+                </details>
 
-              <details class="export-section">
-                <summary>
-                  <span
-                    ><strong data-i18n="exports">开发文件导出</strong
-                    ><small data-i18n="exportHint"
-                      >生成与你的开发环境匹配的引脚定义</small
-                    ></span
-                  ><span>↓</span>
-                </summary>
-                <div class="export-grid">
-                  <button id="exportPinsBtn">pins.h</button
-                  ><button id="exportArduinoBtn">Arduino</button>
-                  <button id="exportStm32Btn">STM32 HAL</button
-                  ><button id="exportEspBtn">ESP-IDF</button>
-                  <button id="exportKicadBtn">KiCad 标签</button>
-                </div>
-              </details>
+                <details class="export-section">
+                  <summary>
+                    <span
+                      ><strong data-i18n="exports">开发文件导出</strong
+                      ><small data-i18n="exportHint"
+                        >生成与你的开发环境匹配的引脚定义</small
+                      ></span
+                    ><span>↓</span>
+                  </summary>
+                  <div class="export-grid">
+                    <button id="exportPinsBtn">pins.h</button
+                    ><button id="exportArduinoBtn">Arduino</button>
+                    <button id="exportStm32Btn">STM32 HAL</button
+                    ><button id="exportEspBtn">ESP-IDF</button>
+                    <button id="exportKicadBtn">KiCad 标签</button>
+                  </div>
+                </details>
+              </section>
             </div>
           </section>
         </section>
