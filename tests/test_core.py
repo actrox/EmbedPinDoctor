@@ -97,6 +97,14 @@ class TestAllocator(unittest.TestCase):
         second = allocate_project(chip, modules)
         self.assertEqual(first, second)
 
+    def test_solver_metadata(self):
+        chip, oled, button, buzzer = _load_fixtures()
+        allocation, metadata = allocate_project(chip, [oled, button, buzzer], return_metadata=True)
+        self.assertEqual(metadata["status"], "optimal")
+        self.assertFalse(metadata["limit_reached"])
+        self.assertEqual(metadata["assigned_count"], len(allocation))
+        self.assertGreater(metadata["nodes_searched"], 0)
+
 
 class TestChecker(unittest.TestCase):
     def test_no_risk_for_clean_project(self):

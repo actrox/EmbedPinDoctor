@@ -3,7 +3,7 @@ from pathlib import Path
 from core.loader import DataLoadError, load_chip, load_module
 
 
-def audit_data(data_dir):
+def audit_data(data_dir, require_verified=False):
     data_dir = Path(data_dir)
     errors = []
     warnings = []
@@ -16,6 +16,8 @@ def audit_data(data_dir):
             chips.append(chip)
             if not chip.get("verified"):
                 warnings.append({"code": "review_required", "file": str(path), "message": f"{chip['id']} 尚未人工签字复核"})
+                if require_verified:
+                    errors.append({"code": "release_unverified", "file": str(path), "message": f"发布门禁要求 {chip['id']} 完成人工签字复核"})
             if not chip.get("datasheet_url", "").startswith("https://"):
                 errors.append({"code": "invalid_source", "file": str(path), "message": "datasheet_url 必须使用 HTTPS"})
         except (DataLoadError, ValueError) as exc:
@@ -62,7 +64,11 @@ def render_audit_markdown(audit):
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--require-verified", action="store_true", help="发布时要求全部芯片完成人工签字")
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    result = audit_data(root / "data")
+    result = audit_data(root / "data", require_verified=args.require_verified)
     print(render_audit_markdown(result))
     raise SystemExit(0 if result["ok"] else 1)

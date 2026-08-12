@@ -149,6 +149,18 @@
       "note": "USART1 接收"
     },
     {
+      "name": "PA11",
+      "functions": ["GPIO", "CAN_RX", "USB_DM", "USART1_CTS", "EXTI"],
+      "tags": [],
+      "note": "CAN 接收 / USB D- / USART1 CTS"
+    },
+    {
+      "name": "PA12",
+      "functions": ["GPIO", "CAN_TX", "USB_DP", "USART1_RTS", "EXTI"],
+      "tags": [],
+      "note": "CAN 发送 / USB D+ / USART1 RTS"
+    },
+    {
       "name": "PA13",
       "functions": [
         "GPIO",

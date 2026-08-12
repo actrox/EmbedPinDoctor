@@ -1,187 +1,586 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f5f0">
-  <title>引脚医生 · EmbedPinDoctor</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="引脚医生首页">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <span><strong>引脚医生</strong><small>EmbedPinDoctor</small></span>
-      </a>
-      <div class="top-actions">
-        <button class="button ghost" id="undoBtn" title="恢复上一个已保存版本">撤销保存</button>
-        <button class="button ghost" id="redoBtn" title="重新应用撤销的版本">重做保存</button>
-        <span class="local-badge"><span></span>数据仅在本机处理</span>
-        <button class="button ghost" id="saveBtn">保存项目</button>
-        <button class="button dark" id="exportMdBtn">导出报告 <span aria-hidden="true">↗</span></button>
-      </div>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div>
-          <p class="eyebrow">HARDWARE DESIGN CHECKUP</p>
-          <h1>给你的硬件项目<br>做一次<strong>全面体检。</strong></h1>
-          <p class="hero-copy">选择主控与外设，自动检查引脚冲突、电气兼容和启动风险。<br>每个问题都附带清晰、可执行的修复建议。</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5f0" />
+    <title>引脚医生 · EmbedPinDoctor</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="引脚医生首页">
+          <span class="brand-mark" aria-hidden="true"
+            ><i></i><i></i><i></i><i></i
+          ></span>
+          <span
+            ><strong data-i18n="brand">引脚医生</strong
+            ><small>EmbedPinDoctor</small></span
+          >
+        </a>
+        <div class="top-actions">
+          <button class="button ghost" id="wizardBtn" data-i18n="newProject">
+            新建向导
+          </button>
+          <button class="button ghost" id="evidenceBtn" data-i18n="evidence">
+            数据证据
+          </button>
+          <label class="language-control"
+            ><span data-i18n="language">语言</span
+            ><select id="languageSelect" aria-label="Language">
+              <option value="zh">中文</option>
+              <option value="en">English</option>
+            </select></label
+          >
+          <button
+            class="button ghost"
+            id="undoBtn"
+            title="恢复上一个已保存版本"
+            data-i18n="undo"
+          >
+            撤销保存
+          </button>
+          <button
+            class="button ghost"
+            id="redoBtn"
+            title="重新应用撤销的版本"
+            data-i18n="redo"
+          >
+            重做保存
+          </button>
+          <span class="local-badge"
+            ><span></span
+            ><b id="runtimeBadge" data-i18n="localOnly"
+              >数据仅在本机处理</b
+            ></span
+          >
+          <button class="button ghost" id="saveBtn" data-i18n="save">
+            保存项目
+          </button>
+          <button class="button dark" id="exportMdBtn" data-i18n="exportReport">
+            导出报告 ↗
+          </button>
         </div>
-        <div class="hero-meta">
-          <div><strong id="chipCount">—</strong><span>款主控</span></div>
-          <div><strong id="moduleCount">—</strong><span>个模块</span></div>
-          <div><strong>本地</strong><span>离线运行</span></div>
-        </div>
-      </section>
+      </header>
 
-      <section class="workspace">
-        <aside class="setup-card">
-          <div class="card-heading">
-            <div><span class="step">01</span><h2>扫描配置</h2></div>
-            <button class="text-button" id="resetBtn">重置</button>
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">HARDWARE DESIGN CHECKUP</p>
+            <h1>
+              <span data-i18n="heroPrefix">给你的硬件项目做一次</span
+              ><br /><strong data-i18n="heroEmphasis">全面体检。</strong>
+            </h1>
+            <p class="hero-copy" data-i18n="heroCopy">
+              选择主控与外设，自动检查引脚冲突、电气兼容和启动风险。每个问题都附带清晰、可执行的修复建议。
+            </p>
           </div>
-
-          <label class="field-label" for="projectName">项目名称</label>
-          <input class="control" id="projectName" value="sensor_board_v1" autocomplete="off">
-
-          <label class="field-label" for="projectPath">现有工程目录 <span class="optional-label">可选</span></label>
-          <input class="control mono-control" id="projectPath" placeholder="例如 C:\Projects\sensor-board" autocomplete="off">
-          <p class="field-hint">填写后将只读扫描代码、CubeMX 与 KiCad 文件；留空则按配置规划新项目。</p>
-
-          <label class="field-label" for="chipSelect">主控芯片</label>
-          <div class="search-wrap">
-            <input class="control search-control" id="chipSearch" placeholder="搜索主控型号…">
-            <span aria-hidden="true">⌕</span>
-          </div>
-          <select class="control" id="chipSelect"></select>
-
-          <label class="field-label" for="strategySelect">分配策略</label>
-          <select class="control" id="strategySelect">
-            <option value="recommended">最佳质量 · 优先低风险引脚</option>
-            <option value="min_change">最小变更 · 尽量保持现有接线</option>
-          </select>
-
-          <div class="field-row">
-            <label class="field-label" for="moduleSearch">项目模块 <span id="selectedCount">已选 0</span></label>
-          </div>
-          <div class="search-wrap">
-            <input class="control search-control" id="moduleSearch" placeholder="搜索传感器、通信或执行模块…">
-            <span aria-hidden="true">⌕</span>
-          </div>
-          <div id="moduleList" class="module-list" aria-label="模块列表"></div>
-
-          <details class="notes-disclosure">
-            <summary>添加项目备注</summary>
-            <textarea class="control" id="notes" placeholder="例如：电池供电、需要保留 SWD 调试口…"></textarea>
-          </details>
-
-          <button id="allocateBtn" class="scan-button"><span class="pulse-dot"></span><span>开始扫描项目</span><span aria-hidden="true">→</span></button>
-          <p class="scan-hint">扫描通常在 1 秒内完成，不会上传任何文件</p>
-
-          <details class="saved-projects">
-            <summary>打开已保存项目</summary>
-            <div id="projectList" class="project-list"></div>
-          </details>
-          <details class="ecosystem-panel">
-            <summary>扩展包管理</summary>
-            <p class="field-hint">安装经过清单、版本、Schema 与可选 SHA-256 校验的数据包、规则包或插件。</p>
-            <input class="control mono-control" id="ecosystemPath" placeholder="扩展包目录的绝对路径" autocomplete="off">
-            <button class="button dark ecosystem-install" id="ecosystemInstallBtn">校验并安装</button>
-            <div id="ecosystemList" class="ecosystem-list"></div>
-          </details>
-        </aside>
-
-        <section class="results" aria-live="polite">
-          <div class="result-header">
-            <div><span class="step">02</span><h2>诊断结果</h2></div>
-            <div class="result-tools">
-              <span id="scanTime">等待扫描</span>
-              <button id="recheckBtn" class="icon-button" title="重新检查" aria-label="重新检查">↻</button>
+          <div class="hero-meta">
+            <div>
+              <strong id="chipCount">—</strong
+              ><span data-i18n="controllers">款主控</span>
+            </div>
+            <div>
+              <strong id="moduleCount">—</strong
+              ><span data-i18n="modules">个模块</span>
+            </div>
+            <div>
+              <strong data-i18n="local">本地</strong
+              ><span data-i18n="offline">离线运行</span>
             </div>
           </div>
-
-          <div id="emptyState" class="empty-state hidden">
-            <div class="empty-orbit"><span>＋</span></div>
-            <h3>准备为项目做一次体检</h3>
-            <p>完成左侧配置后开始扫描，诊断结果会显示在这里。</p>
-          </div>
-
-          <div id="resultContent">
-            <section class="score-card">
-              <div class="score-ring" id="scoreRing"><div><strong id="healthScore">—</strong><span>/ 100</span></div></div>
-              <div class="score-copy">
-                <p class="eyebrow">PROJECT HEALTH</p>
-                <h3 id="healthTitle">正在准备诊断…</h3>
-                <p id="healthSummary">正在读取当前项目配置。</p>
-              </div>
-              <div class="severity-stats">
-                <div><span class="severity-dot error"></span><strong id="errorCount">0</strong><small>严重问题</small></div>
-                <div><span class="severity-dot warning"></span><strong id="warningCount">0</strong><small>需要注意</small></div>
-                <div><span class="severity-dot tip"></span><strong id="tipCount">0</strong><small>优化建议</small></div>
-              </div>
-            </section>
-
-            <section id="scanOverview" class="scan-overview hidden">
-              <div class="scan-overview-title"><span class="step">SCAN</span><div><strong id="scanProjectTypes">已识别工程</strong><small id="scanRoot"></small></div></div>
-              <div class="scan-metrics">
-                <div><strong id="scanFileCount">0</strong><span>扫描文件</span></div>
-                <div><strong id="scanPinCount">0</strong><span>引脚引用</span></div>
-                <div><strong id="scanMatchCount">0</strong><span>方案匹配</span></div>
-              </div>
-              <details>
-                <summary>查看扫描到的引脚来源</summary>
-                <div id="scanSourceList" class="scan-source-list"></div>
-              </details>
-            </section>
-
-            <section class="diagnosis-section">
-              <div class="section-heading">
-                <div><h3>发现的问题</h3><span id="issueTotal">0 项</span></div>
-                <div class="filter-group" role="group" aria-label="问题筛选">
-                  <button class="filter active" data-filter="all">全部</button>
-                  <button class="filter" data-filter="错误">严重</button>
-                  <button class="filter" data-filter="警告">注意</button>
-                  <button class="filter" data-filter="提示">建议</button>
-                </div>
-              </div>
-              <div id="riskList" class="risk-list"></div>
-            </section>
-
-            <section id="alternativeSection" class="alternative-section hidden">
-              <div class="section-heading"><div><h3>可行方案</h3><span id="alternativeCount">0 套</span></div><small>选择方案后可继续锁定和复检</small></div>
-              <div id="alternativeList" class="alternative-list"></div>
-            </section>
-
-            <details class="pin-section">
-              <summary><span><strong>引脚分配详情</strong><small id="allocationSummary">0 条连接</small></span><span>展开查看 ↓</span></summary>
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>锁定</th><th>模块 / 信号</th><th>主控引脚</th><th>功能</th><th>评分</th><th>选择理由</th></tr></thead>
-                  <tbody id="allocationBody"></tbody>
-                </table>
-              </div>
-            </details>
-
-            <details class="export-section">
-              <summary><span><strong>开发文件导出</strong><small>生成与你的开发环境匹配的引脚定义</small></span><span>展开选项 ↓</span></summary>
-              <div class="export-grid">
-                <button id="exportPinsBtn">pins.h</button><button id="exportArduinoBtn">Arduino</button>
-                <button id="exportStm32Btn">STM32 HAL</button><button id="exportEspBtn">ESP-IDF</button>
-                <button id="exportKicadBtn">KiCad 标签</button>
-              </div>
-            </details>
-          </div>
         </section>
-      </section>
-    </main>
 
-    <footer><span>引脚医生 · 自用硬件设计辅助工具</span><span id="versionLabel">本地服务</span></footer>
-  </div>
+        <section class="workspace">
+          <aside class="setup-card">
+            <div class="card-heading">
+              <div>
+                <span class="step">01</span>
+                <h2 data-i18n="scanConfig">扫描配置</h2>
+              </div>
+              <button class="text-button" id="resetBtn" data-i18n="reset">
+                重置
+              </button>
+            </div>
 
-  <div id="toast" class="toast" role="status"><span>✓</span><div><strong id="toastTitle">操作完成</strong><small id="toastText"></small></div></div>
-  <script src="/app.js"></script>
-</body>
+            <label class="field-label" for="projectName" data-i18n="projectName"
+              >项目名称</label
+            >
+            <input
+              class="control"
+              id="projectName"
+              value="sensor_board_v1"
+              autocomplete="off"
+            />
+
+            <div class="platform-step">
+              <span class="mini-step">STEP 01</span>
+              <strong data-i18n="platformQuickPick">硬件平台快捷选择</strong>
+            </div>
+            <div class="platform-grid" role="group" aria-label="硬件平台">
+              <button class="platform-card" type="button" data-platform="esp32">
+                <span class="platform-chip">⌾</span
+                ><span
+                  ><strong>ESP32</strong
+                  ><small>Wi-Fi / 蓝牙 / AIoT</small></span
+                >
+              </button>
+              <button class="platform-card" type="button" data-platform="stm32">
+                <span class="platform-chip">⌾</span
+                ><span
+                  ><strong>STM32</strong><small>实时控制 / 工业级</small></span
+                >
+              </button>
+            </div>
+
+            <label class="field-label" for="projectPath"
+              ><span data-i18n="existingProject">现有工程目录</span>
+              <span class="optional-label" data-i18n="optional"
+                >可选</span
+              ></label
+            >
+            <input
+              class="control mono-control"
+              id="projectPath"
+              placeholder="例如 C:\Projects\sensor-board"
+              autocomplete="off"
+            />
+            <p class="field-hint" data-i18n="projectPathHint">
+              填写后将只读扫描代码、CubeMX 与 KiCad
+              文件；留空则按配置规划新项目。
+            </p>
+
+            <label class="field-label" for="chipSelect" data-i18n="chip"
+              >主控芯片</label
+            >
+            <div class="search-wrap">
+              <input
+                class="control search-control"
+                id="chipSearch"
+                placeholder="搜索主控型号…"
+                data-i18n-placeholder="chipSearch"
+              />
+              <span aria-hidden="true">⌕</span>
+            </div>
+            <select class="control" id="chipSelect"></select>
+
+            <label class="field-label" for="strategySelect" data-i18n="strategy"
+              >分配策略</label
+            >
+            <select class="control" id="strategySelect">
+              <option value="recommended" data-i18n="recommended">
+                最佳质量 · 优先低风险引脚
+              </option>
+              <option value="min_change" data-i18n="minChange">
+                最小变更 · 尽量保持现有接线
+              </option>
+            </select>
+
+            <div class="field-row">
+              <label class="field-label" for="moduleSearch"
+                ><span data-i18n="projectModules">项目模块</span>
+                <span id="selectedCount">已选 0</span></label
+              >
+            </div>
+            <div class="search-wrap">
+              <input
+                class="control search-control"
+                id="moduleSearch"
+                placeholder="搜索传感器、通信或执行模块…"
+                data-i18n-placeholder="moduleSearch"
+              />
+              <span aria-hidden="true">⌕</span>
+            </div>
+            <div
+              id="moduleList"
+              class="module-list"
+              aria-label="模块列表"
+            ></div>
+
+            <details class="notes-disclosure" open>
+              <summary>
+                <span class="mini-step">STEP 02</span>
+                <span data-i18n="requirements">产品需求定义</span>
+              </summary>
+              <textarea
+                class="control"
+                id="notes"
+                data-i18n-placeholder="requirementsPlaceholder"
+                placeholder="描述产品、需要的传感器、通信方式、电源与调试要求…"
+              ></textarea>
+            </details>
+
+            <button id="allocateBtn" class="scan-button">
+              <span class="pulse-dot"></span
+              ><span data-i18n="startScan">开始扫描项目</span
+              ><span aria-hidden="true">→</span>
+            </button>
+            <p class="scan-hint" data-i18n="scanHint">
+              扫描通常在 1 秒内完成，不会上传任何文件
+            </p>
+
+            <details class="saved-projects">
+              <summary data-i18n="savedProjects">打开已保存项目</summary>
+              <div id="projectList" class="project-list"></div>
+            </details>
+            <details class="ecosystem-panel">
+              <summary data-i18n="ecosystem">扩展包管理</summary>
+              <p class="field-hint" data-i18n="ecosystemHint">
+                安装经过清单、版本、Schema 与可选 SHA-256
+                校验的数据包、规则包或插件。
+              </p>
+              <input
+                class="control mono-control"
+                id="ecosystemPath"
+                placeholder="扩展包目录的绝对路径"
+                autocomplete="off"
+              />
+              <button
+                class="button dark ecosystem-install"
+                id="ecosystemInstallBtn"
+                data-i18n="install"
+              >
+                校验并安装
+              </button>
+              <div id="ecosystemList" class="ecosystem-list"></div>
+            </details>
+          </aside>
+
+          <section class="results" aria-live="polite">
+            <div class="result-header">
+              <div>
+                <span class="step">02</span>
+                <h2 data-i18n="results">系统架构与诊断</h2>
+              </div>
+              <div class="result-tools">
+                <div id="feasibilityBadge" class="feasibility-badge">
+                  <span>✓</span><b data-i18n="feasible">方案可行</b
+                  ><small id="feasibilityHint">等待分析</small>
+                </div>
+                <nav class="view-tabs" aria-label="结果视图">
+                  <button
+                    class="view-tab active"
+                    data-view-target="wiringSection"
+                    data-i18n="architecture"
+                  >
+                    架构图
+                  </button>
+                  <button
+                    class="view-tab"
+                    data-view-target="pinDetailsSection"
+                    data-i18n="pinTable"
+                  >
+                    引脚表
+                  </button>
+                  <button
+                    class="view-tab"
+                    data-view-target="diagnosisSection"
+                    data-i18n="riskDiagnosis"
+                  >
+                    风险诊断
+                  </button>
+                </nav>
+                <span id="scanTime" data-i18n="waiting">等待扫描</span>
+                <button
+                  id="recheckBtn"
+                  class="icon-button"
+                  title="重新检查"
+                  aria-label="重新检查"
+                >
+                  ↻
+                </button>
+                <button
+                  id="downloadBtn"
+                  class="icon-button"
+                  type="button"
+                  data-i18n-title="download"
+                  title="下载"
+                  aria-label="下载"
+                >
+                  ↓
+                </button>
+                <button
+                  id="printBtn"
+                  class="icon-button"
+                  type="button"
+                  data-i18n-title="print"
+                  title="打印"
+                  aria-label="打印"
+                >
+                  ▣
+                </button>
+              </div>
+            </div>
+
+            <div id="emptyState" class="empty-state hidden">
+              <div class="empty-orbit"><span>＋</span></div>
+              <h3>准备为项目做一次体检</h3>
+              <p>完成左侧配置后开始扫描，诊断结果会显示在这里。</p>
+            </div>
+
+            <div id="resultContent">
+              <section id="wiringSection" class="wiring-section">
+                <div class="wiring-heading">
+                  <div>
+                    <span class="wiring-kicker">SYSTEM ARCHITECTURE</span>
+                    <h3 data-i18n="architectureTitle">系统架构图</h3>
+                    <p data-i18n="architectureCopy">
+                      主控、外设与已分配引脚的可视化连接
+                    </p>
+                  </div>
+                  <div class="wiring-legend">
+                    <span
+                      ><i class="legend-dot data"></i
+                      ><b data-i18n="dataSignal">数据信号</b></span
+                    >
+                    <span
+                      ><i class="legend-dot power"></i
+                      ><b data-i18n="power">电源</b></span
+                    >
+                    <span
+                      ><i class="legend-dot safe"></i
+                      ><b data-i18n="lowRisk">低风险</b></span
+                    >
+                  </div>
+                </div>
+                <div id="wiringCanvas" class="wiring-canvas"></div>
+                <div class="diagram-actions">
+                  <button
+                    id="exportDiagramBtn"
+                    type="button"
+                    data-i18n="exportDiagram"
+                  >
+                    导出 SVG 架构图</button
+                  ><small data-i18n="diagramHint">点击模块可高亮相关连线</small>
+                </div>
+              </section>
+
+              <section class="score-card">
+                <div class="score-ring" id="scoreRing">
+                  <div>
+                    <strong id="healthScore">—</strong><span>/ 100</span>
+                  </div>
+                </div>
+                <div class="score-copy">
+                  <p class="eyebrow">PROJECT HEALTH</p>
+                  <h3 id="healthTitle" data-i18n="preparing">正在准备诊断…</h3>
+                  <p id="healthSummary" data-i18n="reading">
+                    正在读取当前项目配置。
+                  </p>
+                </div>
+                <div class="severity-stats">
+                  <div>
+                    <span class="severity-dot error"></span
+                    ><strong id="errorCount">0</strong
+                    ><small data-i18n="errors">严重问题</small>
+                  </div>
+                  <div>
+                    <span class="severity-dot warning"></span
+                    ><strong id="warningCount">0</strong
+                    ><small data-i18n="warnings">需要注意</small>
+                  </div>
+                  <div>
+                    <span class="severity-dot tip"></span
+                    ><strong id="tipCount">0</strong
+                    ><small data-i18n="tips">优化建议</small>
+                  </div>
+                </div>
+              </section>
+
+              <section id="scanOverview" class="scan-overview hidden">
+                <div class="scan-overview-title">
+                  <span class="step">SCAN</span>
+                  <div>
+                    <strong id="scanProjectTypes">已识别工程</strong
+                    ><small id="scanRoot"></small>
+                  </div>
+                </div>
+                <div class="scan-metrics">
+                  <div>
+                    <strong id="scanFileCount">0</strong><span>扫描文件</span>
+                  </div>
+                  <div>
+                    <strong id="scanPinCount">0</strong><span>引脚引用</span>
+                  </div>
+                  <div>
+                    <strong id="scanMatchCount">0</strong><span>方案匹配</span>
+                  </div>
+                </div>
+                <details>
+                  <summary>查看扫描到的引脚来源</summary>
+                  <div id="scanSourceList" class="scan-source-list"></div>
+                </details>
+              </section>
+
+              <section id="diagnosisSection" class="diagnosis-section">
+                <div class="section-heading">
+                  <div>
+                    <h3 data-i18n="issues">发现的问题</h3>
+                    <span id="issueTotal">0 项</span>
+                  </div>
+                  <div class="filter-group" role="group" aria-label="问题筛选">
+                    <button
+                      class="filter active"
+                      data-filter="all"
+                      data-i18n="all"
+                    >
+                      全部
+                    </button>
+                    <button
+                      class="filter"
+                      data-filter="错误"
+                      data-i18n="severe"
+                    >
+                      严重
+                    </button>
+                    <button
+                      class="filter"
+                      data-filter="警告"
+                      data-i18n="caution"
+                    >
+                      注意
+                    </button>
+                    <button
+                      class="filter"
+                      data-filter="提示"
+                      data-i18n="advice"
+                    >
+                      建议
+                    </button>
+                  </div>
+                </div>
+                <div id="riskList" class="risk-list"></div>
+              </section>
+
+              <section
+                id="alternativeSection"
+                class="alternative-section hidden"
+              >
+                <div class="section-heading">
+                  <div>
+                    <h3 data-i18n="plans">可行方案</h3>
+                    <span id="alternativeCount">0 套</span>
+                  </div>
+                  <small data-i18n="planHint">选择方案后可继续锁定和复检</small>
+                </div>
+                <div id="alternativeList" class="alternative-list"></div>
+              </section>
+
+              <details id="pinDetailsSection" class="pin-section">
+                <summary>
+                  <span
+                    ><strong data-i18n="pinDetails">引脚分配详情</strong
+                    ><small id="allocationSummary">0 条连接</small></span
+                  ><span>↓</span>
+                </summary>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th data-i18n="lock">锁定</th>
+                        <th data-i18n="moduleSignal">模块 / 信号</th>
+                        <th data-i18n="controllerPin">主控引脚</th>
+                        <th data-i18n="function">功能</th>
+                        <th data-i18n="score">评分</th>
+                        <th data-i18n="reason">选择理由</th>
+                      </tr>
+                    </thead>
+                    <tbody id="allocationBody"></tbody>
+                  </table>
+                </div>
+              </details>
+
+              <details class="export-section">
+                <summary>
+                  <span
+                    ><strong data-i18n="exports">开发文件导出</strong
+                    ><small data-i18n="exportHint"
+                      >生成与你的开发环境匹配的引脚定义</small
+                    ></span
+                  ><span>↓</span>
+                </summary>
+                <div class="export-grid">
+                  <button id="exportPinsBtn">pins.h</button
+                  ><button id="exportArduinoBtn">Arduino</button>
+                  <button id="exportStm32Btn">STM32 HAL</button
+                  ><button id="exportEspBtn">ESP-IDF</button>
+                  <button id="exportKicadBtn">KiCad 标签</button>
+                </div>
+              </details>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <footer>
+        <span data-i18n="footer">引脚医生 · 自用硬件设计辅助工具</span
+        ><span id="versionLabel">本地服务</span>
+      </footer>
+    </div>
+
+    <div id="toast" class="toast" role="status">
+      <span>✓</span>
+      <div>
+        <strong id="toastTitle">操作完成</strong><small id="toastText"></small>
+      </div>
+    </div>
+    <dialog id="wizardDialog" class="workbench-dialog">
+      <form method="dialog">
+        <header>
+          <div>
+            <span class="mini-step">NEW PROJECT</span>
+            <h2 data-i18n="wizardTitle">新建硬件项目</h2>
+          </div>
+          <button value="cancel" aria-label="关闭">×</button>
+        </header>
+        <label
+          ><span data-i18n="projectName">项目名称</span
+          ><input id="wizardName" class="control" value="new_hardware_project"
+        /></label>
+        <label
+          ><span data-i18n="platformQuickPick">硬件平台快捷选择</span
+          ><select id="wizardPlatform" class="control">
+            <option value="esp32">ESP32</option>
+            <option value="stm32">STM32</option>
+          </select></label
+        >
+        <label
+          ><span data-i18n="requirements">产品需求定义</span
+          ><textarea
+            id="wizardRequirements"
+            class="control"
+            data-i18n-placeholder="requirementsPlaceholder"
+          ></textarea>
+        </label>
+        <menu>
+          <button value="cancel" class="button ghost" data-i18n="cancel">
+            取消</button
+          ><button
+            id="createProjectBtn"
+            value="default"
+            class="button dark"
+            data-i18n="createProject"
+          >
+            创建并分析
+          </button>
+        </menu>
+      </form>
+    </dialog>
+    <dialog id="evidenceDialog" class="workbench-dialog evidence-dialog">
+      <form method="dialog">
+        <header>
+          <div>
+            <span class="mini-step">DATA TRUST</span>
+            <h2 data-i18n="evidenceTitle">硬件数据证据</h2>
+          </div>
+          <button value="cancel">×</button>
+        </header>
+        <div id="evidenceContent"></div>
+      </form>
+    </dialog>
+    <script src="./i18n.js"></script>
+    <script src="./demo.js"></script>
+    <script src="./app.js"></script>
+  </body>
 </html>

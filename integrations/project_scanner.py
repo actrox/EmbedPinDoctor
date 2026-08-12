@@ -18,6 +18,11 @@ PORT_PATTERN = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)_PORT\s+GPIO([A-Z])\b
 STM_PIN_PATTERN = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)_PIN\s+GPIO_PIN_(\d+)\b")
 IOC_PATTERN = re.compile(r"^\s*(P[A-Z]\d+)\.(?:Signal|GPIO_Label|Label)\s*=\s*(.+?)\s*$")
 KICAD_TEXT_PATTERN = re.compile(r"^\s*([A-Za-z_]\w*)\s+(GPIO\d+|GP\d+|P[A-Z]\d+)\b")
+SIGNAL_ALIASES = {
+    "OLED_CLK": "OLED_I2C_SCL", "DISPLAY_SCL": "OLED_I2C_SCL", "I2C_SCK": "OLED_I2C_SCL",
+    "OLED_DATA": "OLED_I2C_SDA", "DISPLAY_SDA": "OLED_I2C_SDA", "I2C_DATA": "OLED_I2C_SDA",
+    "LED_PIN": "WS2812_DIN", "NEOPIXEL_PIN": "WS2812_DIN",
+}
 
 
 class ProjectScanError(ValueError):
@@ -25,7 +30,8 @@ class ProjectScanError(ValueError):
 
 
 def _normal_symbol(value):
-    return re.sub(r"[^A-Z0-9]+", "_", str(value).upper()).strip("_")
+    normalized = re.sub(r"[^A-Z0-9]+", "_", str(value).upper()).strip("_")
+    return SIGNAL_ALIASES.get(normalized, normalized)
 
 
 def _canonical_pin(value, chip_hint=None):
@@ -267,6 +273,8 @@ def compare_scan(scan, chip, allocation):
         "doctor_symbols": len(doctor), "scanned_symbols": len(by_symbol),
         "unmatched_scan_symbols": sorted(set(by_symbol) - set(doctor)),
         "unmatched_doctor_symbols": sorted(set(doctor) - set(by_symbol)),
+        "match_rate": round(matched / max(1, len(doctor)) * 100, 1),
+        "signal_aliases_applied": SIGNAL_ALIASES,
     }
 
 

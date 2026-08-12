@@ -107,7 +107,7 @@ def _allocation_item(item, pin=None, locked=False, kept=False):
     return {"module_id": module["id"], "module_name": module["name"], "module_pin": requirement["module_pin"], "chip_pin": pin["name"], "function": requirement["function"], "direction": requirement.get("direction", "bidirectional"), "score": _score_pin(pin, requirement), "note": "；".join(reasons), "locked": locked, "kept_existing": kept, "reasons": reasons}
 
 
-def allocate_project(chip, modules, locked_pins=None, preferred_allocation=None, strategy="recommended", forbidden=None):
+def allocate_project(chip, modules, locked_pins=None, preferred_allocation=None, strategy="recommended", forbidden=None, return_metadata=False):
     """Return a deterministic, globally feasible allocation.
 
     ``locked_pins`` maps ``module_id:module_pin`` to a mandatory MCU pin.
@@ -119,12 +119,15 @@ def allocate_project(chip, modules, locked_pins=None, preferred_allocation=None,
     forbidden = set(forbidden or set())
     items = _requirements(chip, modules, locked)
     best = {"objective": (-1, -1, -1), "rows": []}
-    nodes, memo = 0, {}
+    nodes, memo, limit_reached = 0, {}, False
 
     def search(index, used_pins, shared_buses, rows, assigned, stability, score):
-        nonlocal nodes
+        nonlocal nodes, limit_reached
         nodes += 1
-        if nodes > MAX_SEARCH_NODES or assigned + len(items) - index < best["objective"][0]:
+        if nodes > MAX_SEARCH_NODES:
+            limit_reached = True
+            return
+        if assigned + len(items) - index < best["objective"][0]:
             return
         state_key = (index, tuple(sorted(used_pins)), tuple(sorted((key, pin["name"]) for key, pin in shared_buses.items())))
         objective = (assigned, stability if strategy == "min_change" else 0, score)
@@ -162,7 +165,16 @@ def allocate_project(chip, modules, locked_pins=None, preferred_allocation=None,
 
     search(0, set(), {}, [], 0, 0, 0)
     ordered = sorted(best["rows"], key=lambda pair: (pair[0]["module_index"], pair[0]["requirement_index"]))
-    return [row for _, row in ordered]
+    allocation = [row for _, row in ordered]
+    assigned_count = sum(row["chip_pin"] != "未分配" for row in allocation)
+    metadata = {
+        "status": "incomplete" if limit_reached else ("optimal" if assigned_count == len(items) else "impossible"),
+        "nodes_searched": nodes,
+        "limit_reached": limit_reached,
+        "assigned_count": assigned_count,
+        "total_count": len(items),
+    }
+    return (allocation, metadata) if return_metadata else allocation
 
 
 def allocation_score(allocation):

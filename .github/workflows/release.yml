@@ -1,0 +1,23 @@
+name: Release gate
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  verify-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Require signed hardware data
+        run: python -m quality.data_audit --require-verified
+      - name: Run full regression suite
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Build Windows distribution
+        run: |
+          pip install -r requirements.txt
+          python -m release.build_release
