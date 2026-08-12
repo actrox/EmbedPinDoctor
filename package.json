@@ -3,9 +3,6 @@
   "version": "0.2.0-alpha.1",
   "private": true,
   "type": "module",
-  "prettier": {
-    "endOfLine": "lf"
-  },
   "scripts": {
     "lint": "eslint web/*.js",
     "format": "prettier --write web README.md README_EN.md .github/workflows/*.yml",
