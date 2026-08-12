@@ -18,6 +18,11 @@ PORT_PATTERN = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)_PORT\s+GPIO([A-Z])\b
 STM_PIN_PATTERN = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)_PIN\s+GPIO_PIN_(\d+)\b")
 IOC_PATTERN = re.compile(r"^\s*(P[A-Z]\d+)\.(?:Signal|GPIO_Label|Label)\s*=\s*(.+?)\s*$")
 KICAD_TEXT_PATTERN = re.compile(r"^\s*([A-Za-z_]\w*)\s+(GPIO\d+|GP\d+|P[A-Z]\d+)\b")
+SIGNAL_ALIASES = {
+    "OLED_CLK": "OLED_I2C_SCL", "DISPLAY_SCL": "OLED_I2C_SCL", "I2C_SCK": "OLED_I2C_SCL",
+    "OLED_DATA": "OLED_I2C_SDA", "DISPLAY_SDA": "OLED_I2C_SDA", "I2C_DATA": "OLED_I2C_SDA",
+    "LED_PIN": "WS2812_DIN", "NEOPIXEL_PIN": "WS2812_DIN",
+}
 
 
 class ProjectScanError(ValueError):
@@ -25,7 +30,8 @@ class ProjectScanError(ValueError):
 
 
 def _normal_symbol(value):
-    return re.sub(r"[^A-Z0-9]+", "_", str(value).upper()).strip("_")
+    normalized = re.sub(r"[^A-Z0-9]+", "_", str(value).upper()).strip("_")
+    return SIGNAL_ALIASES.get(normalized, normalized)
 
 
 def _canonical_pin(value, chip_hint=None):
@@ -228,12 +234,15 @@ def scan_project(project_path):
     }
 
 
-def compare_scan(scan, chip, allocation):
+def compare_scan(scan, chip, allocation, signal_mapping=None):
     risks = []
     valid_pins = {pin["name"] for pin in chip["pins"]}
     by_symbol = defaultdict(list)
     by_pin = defaultdict(list)
-    for use in scan["pin_uses"]:
+    signal_mapping = { _normal_symbol(key): _normal_symbol(value) for key, value in (signal_mapping or {}).items() }
+    for original in scan["pin_uses"]:
+        use = dict(original)
+        use["symbol"] = signal_mapping.get(use["symbol"], use["symbol"])
         by_symbol[use["symbol"]].append(use)
         by_pin[use["pin"]].append(use)
         if use["pin"] not in valid_pins:
@@ -267,6 +276,9 @@ def compare_scan(scan, chip, allocation):
         "doctor_symbols": len(doctor), "scanned_symbols": len(by_symbol),
         "unmatched_scan_symbols": sorted(set(by_symbol) - set(doctor)),
         "unmatched_doctor_symbols": sorted(set(doctor) - set(by_symbol)),
+        "match_rate": round(matched / max(1, len(doctor)) * 100, 1),
+        "signal_aliases_applied": SIGNAL_ALIASES,
+        "user_signal_mapping": signal_mapping,
     }
 
 

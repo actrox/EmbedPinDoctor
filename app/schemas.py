@@ -99,6 +99,7 @@ class AllocateRequest(BaseModel):
     use_detected_chip: bool = True
     project_name: str = "untitled_project"
     notes: str = ""
+    signal_mapping: Optional[Dict[str, str]] = None
     chip_detection: Optional[Dict[str, Any]] = None
 
 class ScanProjectRequest(AllocateRequest):

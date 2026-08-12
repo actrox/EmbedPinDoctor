@@ -53,6 +53,9 @@ def validate_chip(chip):
     _require_number(chip, "absolute_max_input_voltage", "芯片", "$", 0)
     _require_number(chip, "default_max_output_current_ma", "芯片", "$", 0)
     _require_bool(chip, "supports_open_drain", "芯片", "$")
+    for key in ("board_power_budget_ma", "adc_max_input_voltage"):
+        if key in chip:
+            _require_number(chip, key, "芯片", "$", 0)
     pins = chip.get("pins")
     if not isinstance(pins, list) or not pins:
         _fail("芯片", "$.pins", "必须是非空数组")
@@ -98,6 +101,12 @@ def validate_module(module):
         _require_number(module, "spi_max_hz", "模块", "$", 1)
     if "uart_requires_flow_control" in module and not isinstance(module["uart_requires_flow_control"], bool):
         _fail("模块", "$", "uart_requires_flow_control 必须是布尔值")
+    for key in ("peak_current_ma", "startup_current_ma", "analog_output_max_v"):
+        if key in module:
+            _require_number(module, key, "模块", "$", 0)
+    for key in ("requires_decoupling",):
+        if key in module and not isinstance(module[key], bool):
+            _fail("模块", "$", f"{key} 必须是布尔值")
     requirements = module.get("requirements")
     if not isinstance(requirements, list) or not requirements:
         _fail("模块", "$.requirements", "必须是非空数组")

@@ -106,6 +106,24 @@ def check_project(chip, modules, allocation):
             level_note = f"，上拉电压应不高于 {chip.get('absolute_max_input_voltage')}V" if pullup_voltage else ""
             risks.append(_risk("提示", "pullup_required", f"{module['name']} 使用 I2C，请确认 SDA/SCL 已有合适上拉电阻。", f"检查模块板载电阻，并根据总线长度和速率计算等效上拉{level_note}。", {"module": module["name"]}))
 
+    current_items = [(module.get("peak_current_ma"), module) for module in modules if module.get("peak_current_ma") is not None]
+    total_peak_current = sum(value for value, _ in current_items)
+    budget = chip.get("board_power_budget_ma")
+    if budget is not None and total_peak_current > budget:
+        risks.append(_risk("错误", "power_budget_exceeded", f"模块峰值电流合计约 {total_peak_current}mA，超过当前主控板建议供电预算 {budget}mA。", "使用独立稳压电源或降低负载，并核对启动瞬间、无线发射和电机堵转电流。", {"peak_current_ma": total_peak_current, "budget_ma": budget}))
+    elif total_peak_current:
+        risks.append(_risk("提示", "power_budget_estimate", f"已知模块峰值电流合计约 {total_peak_current}mA。", "将主控、电源转换损耗和未标注负载计入总电源预算，并至少保留 20% 裕量。", {"peak_current_ma": total_peak_current}, confidence="medium"))
+
+    for module in modules:
+        if module.get("requires_decoupling"):
+            risks.append(_risk("提示", "decoupling_required", f"{module['name']} 对电源瞬态敏感，需要就近去耦。", "在器件电源脚附近放置建议容量的陶瓷电容，并缩短高频回流路径。", {"module": module["id"]}))
+        if module.get("bus_termination"):
+            risks.append(_risk("提示", "bus_termination_required", f"{module['name']} 使用 {module['bus_termination']} 总线，请确认终端匹配。", "只在总线物理两端布置匹配终端，并核对阻值、拓扑和共模保护。", {"module": module["id"], "bus": module["bus_termination"]}))
+        analog_max = module.get("analog_output_max_v")
+        adc_max = chip.get("adc_max_input_voltage", chip.get("io_voltage"))
+        if analog_max is not None and adc_max is not None and analog_max > adc_max:
+            risks.append(_risk("错误", "adc_input_overvoltage", f"{module['name']} 模拟输出最高 {analog_max}V，超过主控 ADC 建议输入上限 {adc_max}V。", "增加分压、缓冲和钳位保护，并重新计算 ADC 量程与误差。", {"module": module["id"], "analog_max_v": analog_max, "adc_max_v": adc_max}))
+
     spi_modules = [module for module in modules if any(req["function"].startswith("SPI") for req in module["requirements"])]
     if len(spi_modules) > 1:
         risks.append(_risk("提示", "spi_cs", "多个 SPI 模块共用总线时，每个模块都需要独立片选 CS 引脚。", "为每个 SPI 从设备预留独立 GPIO 作为 CS。"))

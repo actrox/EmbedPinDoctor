@@ -5,6 +5,7 @@ import logging
 import mimetypes
 import os
 import re
+import secrets
 import sys
 from urllib.parse import parse_qs, urlparse
 
@@ -39,6 +40,7 @@ from core.project_store import ProjectStore
 from ecosystem.package_manager import PackageManager
 from core.pin_diagram import generate_chip_svg
 from integrations.ioc_import import import_ioc
+from app.project_service import ProjectService
 
 USER_ROOT = (Path(os.environ.get("LOCALAPPDATA", Path.home())) / "EmbedPinDoctor") if getattr(sys, "frozen", False) else PROJECT_ROOT
 BUILTIN_DATA_DIR = PROJECT_ROOT / "data"
@@ -50,9 +52,12 @@ WEB_DIR = PROJECT_ROOT / "web"
 PROJECT_STORE = ProjectStore(PROJECTS_DIR)
 logger = logging.getLogger(__name__)
 APP_VERSION = (PROJECT_ROOT / "VERSION").read_text(encoding="utf-8").strip() if (PROJECT_ROOT / "VERSION").exists() else "0.0.0"
+MAX_REQUEST_BYTES = 2 * 1024 * 1024
+SESSION_TOKEN = os.environ.get("EMBEDPIN_SESSION_TOKEN") or secrets.token_urlsafe(24)
 INSTALLED_PLUGIN_DIR = USER_ROOT / "user_plugins"
 INSTALLED_RULE_DIR = USER_ROOT / "user_rule_packs"
 ECOSYSTEM = PackageManager(USER_ROOT / ".ecosystem", USER_DATA_DIR, INSTALLED_RULE_DIR, INSTALLED_PLUGIN_DIR, APP_VERSION)
+PROJECT_SERVICE = ProjectService(DATA_DIR, USER_DATA_DIR)
 
 
 def list_plugins(states=None):
@@ -80,31 +85,11 @@ def _safe_name(name):
 
 
 def list_chips(query=""):
-    query = query.lower().strip()
-    chips = []
-    for path in _data_files("chips"):
-        chip = load_chip(path)
-        item = {"id": chip["id"], "name": chip["name"], "voltage": chip.get("voltage", "未知")}
-        if not query or query in item["id"].lower() or query in item["name"].lower():
-            chips.append(item)
-    return chips
+    return PROJECT_SERVICE.list_chips(query)
 
 
 def list_modules(query=""):
-    query = query.lower().strip()
-    modules = []
-    for path in _data_files("modules"):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        item = {
-            "id": data["id"],
-            "name": data["name"],
-            "voltage": data.get("voltage", "未知"),
-            "description": data.get("description", ""),
-        }
-        haystack = f"{item['id']} {item['name']} {item['description']}".lower()
-        if not query or query in haystack:
-            modules.append(item)
-    return modules
+    return PROJECT_SERVICE.list_modules(query)
 
 
 class InputValidationError(ValueError):
@@ -125,26 +110,11 @@ def _require(payload, field, types=None, allow_empty=False):
 
 
 def build_project(payload):
-    chip_id = payload.get("chip_id") or payload.get("chip")
-    module_ids = payload.get("module_ids") or payload.get("modules") or []
-    allocation_override = payload.get("allocation")
-    if not chip_id:
-        raise InputValidationError("chip_id", "缺少必填字段，请选择芯片")
-    if not module_ids:
-        raise InputValidationError("module_ids", "至少选择一个模块")
-    if not isinstance(module_ids, (list, tuple)):
-        raise InputValidationError("module_ids", "应为数组")
-
-    chip = load_chip(_data_file("chips", chip_id))
-    modules = [load_module(_data_file("modules", str(module_id))) for module_id in module_ids]
-    allocation = allocation_override or allocate_project(
-        chip, modules,
-        locked_pins=payload.get("locked_pins"),
-        preferred_allocation=payload.get("preferred_allocation"),
-        strategy=payload.get("strategy", "recommended"),
-    )
-    risks = check_project(chip, modules, allocation)
-    return chip, modules, allocation, risks
+    try:
+        result = PROJECT_SERVICE.build_project(payload)
+    except ValueError as exc:
+        raise InputValidationError("project", str(exc)) from exc
+    return result["chip"], result["modules"], result["allocation"], result["risks"], result["solver"]
 
 
 def save_project(payload):
@@ -153,7 +123,7 @@ def save_project(payload):
 
 
 def export_project(payload, kind):
-    chip, modules, allocation, risks = build_project(payload)
+    chip, modules, allocation, risks, _solver = build_project(payload)
     project_name = _safe_name(payload.get("project_name", "demo"))
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     if kind == "markdown":
@@ -238,6 +208,11 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _safe_error(self, exc):
+        if isinstance(exc, (InputValidationError, ValueError, KeyError, json.JSONDecodeError)):
+            return str(exc)
+        return "内部处理失败，请查看本地日志"
+
     def _send_file(self, path):
         if not path.exists() or not path.is_file():
             self._send_json({"error": "文件不存在"}, 404)
@@ -252,6 +227,8 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
 
     def _read_payload(self):
         length = int(self.headers.get("Content-Length", "0"))
+        if length > MAX_REQUEST_BYTES:
+            raise InputValidationError("request", f"请求体不能超过 {MAX_REQUEST_BYTES // 1024 // 1024}MB")
         raw = self.rfile.read(length).decode("utf-8") if length else "{}"
         return json.loads(raw or "{}")
 
@@ -265,7 +242,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(exc), "code": "input_error", "field": exc.field}, 400)
             except Exception as exc:
                 logger.exception("GET %s failed", parsed.path)
-                self._send_json({"error": str(exc)}, 400)
+                self._send_json({"error": self._safe_error(exc)}, 400)
         else:
             self._serve_static(parsed.path)
 
@@ -300,7 +277,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
             self._send_json({"error": str(exc), "code": "input_error", "field": exc.field}, 400)
         except Exception as exc:
             logger.exception("POST %s failed", self.path)
-            self._send_json({"error": str(exc)}, 400)
+            self._send_json({"error": self._safe_error(exc)}, 400)
 
     def log_message(self, fmt, *args):
         return
@@ -359,21 +336,21 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
     # --- POST handlers ---
 
     def _post_allocate(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        result = PROJECT_SERVICE.build_project(payload)
+        chip, modules, allocation, risks, solver = result["chip"], result["modules"], result["allocation"], result["risks"], result["solver"]
         risks = explain_risks(risks) if payload.get("explain_risks", True) else risks
-        alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
-        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": risks, "alternatives": alternatives})
+        self._send_json({**result, "risks": risks})
 
     def _post_scan_project(self, payload):
         scan = scan_project(payload["project_path"])
         requested_chip_id = payload.get("chip_id")
         if scan.get("suggested_chip_id") and payload.get("use_detected_chip", True):
             payload["chip_id"] = scan["suggested_chip_id"]
-        chip, modules, allocation, risks = build_project(payload)
-        comparison = compare_scan(scan, chip, allocation)
+        chip, modules, allocation, risks, solver = build_project(payload)
+        comparison = compare_scan(scan, chip, allocation, payload.get("signal_mapping"))
         combined_risks = explain_risks(risks + comparison["risks"])
         alternatives = allocate_alternatives(chip, modules, int(payload.get("alternative_count", 3)), payload.get("locked_pins"), payload.get("preferred_allocation"), payload.get("strategy", "recommended")) if payload.get("include_alternatives", False) else []
-        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})
+        self._send_json({"chip": chip, "modules": modules, "allocation": allocation, "risks": combined_risks, "scan": scan, "comparison": comparison, "alternatives": alternatives, "solver": solver, "data_trust": {"verified": chip.get("verified", False), "status": chip.get("data_status"), "source": chip.get("datasheet_url")}, "chip_detection": {"requested": requested_chip_id, "detected": scan.get("suggested_chip_id"), "used": chip["id"]}})
 
     def _post_save(self, payload):
         path, migrations = save_project(payload)
@@ -394,13 +371,13 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self._send_json({"exported": True, "path": str(path)})
 
     def _post_export_platformio(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        chip, modules, allocation, risks, _solver = build_project(payload)
         project_name = _safe_name(payload.get("project_name", "platformio_project"))
         result = generate_platformio_project(OUTPUT_DIR / f"{project_name}_platformio", chip, allocation)
         self._send_json({"generated": True, **result})
 
     def _post_export_ioc(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        chip, modules, allocation, risks, _solver = build_project(payload)
         project_name = _safe_name(payload.get("project_name", "ioc_hint"))
         path = OUTPUT_DIR / f"{project_name}.ioc_hint.txt"
         path.write_text(render_ioc_hint(chip, allocation), encoding="utf-8")
@@ -440,7 +417,7 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self._send_json(import_ioc(payload["path"]))
 
     def _post_export_svg(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        chip, modules, allocation, risks, _solver = build_project(payload)
         if payload.get("explain_risks", True):
             risks = explain_risks(risks)
         svg = generate_chip_svg(chip, allocation, risks)
@@ -480,11 +457,11 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
         self._send_json(update_review(PROJECTS_DIR, payload["review_id"], payload.get("actor", "anonymous"), payload.get("status"), payload.get("comment")))
 
     def _post_design_review(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        chip, modules, allocation, risks, _solver = build_project(payload)
         self._send_json(build_design_review(chip, modules, allocation, explain_risks(risks)))
 
     def _post_design_review_export(self, payload):
-        chip, modules, allocation, risks = build_project(payload)
+        chip, modules, allocation, risks, _solver = build_project(payload)
         review = build_design_review(chip, modules, allocation, explain_risks(risks))
         path = OUTPUT_DIR / f"{_safe_name(payload.get('project_name', 'review'))}_design_review.md"
         path.write_text(render_design_review_markdown(review), encoding="utf-8")
@@ -513,10 +490,12 @@ class EmbedPinDoctorHandler(BaseHTTPRequestHandler):
 
 
 def run(host="127.0.0.1", port=8765):
+    if host not in {"127.0.0.1", "localhost", "::1"} and os.environ.get("EMBEDPIN_ALLOW_REMOTE") != "1":
+        raise RuntimeError("拒绝外部监听；如确有需要，请显式设置 EMBEDPIN_ALLOW_REMOTE=1 并自行配置网络访问控制")
     server = ThreadingHTTPServer((host, port), EmbedPinDoctorHandler)
     print(f"EmbedPinDoctor P1 Web MVP: http://{host}:{port}")
     server.serve_forever()
 
 
 if __name__ == "__main__":
-    run()
+    run(os.environ.get("HOST", "127.0.0.1"), int(os.environ.get("PORT", "8765")))

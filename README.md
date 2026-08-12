@@ -1,16 +1,31 @@
 # EmbedPinDoctor
 
+[简体中文](README.md) | [English](README_EN.md)
+
 [![Version](https://img.shields.io/badge/version-0.1.0--alpha.8-blue)](VERSION)
 [![Python](https://img.shields.io/badge/python-3.11%2B-green)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+[![CI](https://github.com/actrox/EmbedPinDoctor/actions/workflows/ci.yml/badge.svg)](https://github.com/actrox/EmbedPinDoctor/actions/workflows/ci.yml)
+[![Online Demo](https://img.shields.io/badge/demo-GitHub%20Pages-2ea44f)](https://actrox.github.io/EmbedPinDoctor/)
 
 EmbedPinDoctor（引脚医生）是一个本地运行的嵌入式硬件设计辅助工具。选择主控和项目模块后，它可以自动规划引脚、检查常见设计风险，并给出可执行的修改建议。
 
-当前版本 `0.1.0-alpha.8` 已完成 P0-P4 所有里程碑，包含完整的引脚规划、风险诊断、工程扫描、推荐闭环、发布管理和生态扩展能力。
+当前版本 `0.2.0-alpha.1` 已完成 P0-P4 所有里程碑，包含完整的引脚规划、风险诊断、工程扫描、推荐闭环、发布管理和生态扩展能力。
+
+## 界面预览
+
+[在线体验只读 Demo](https://actrox.github.io/EmbedPinDoctor/) · Demo 使用内置示例数据，不会访问或上传本机文件。完整的工程扫描、保存和导出功能需要本地运行。
+
+![EmbedPinDoctor 中文诊断工作台](docs/images/workbench-zh.png)
+
+英文界面可通过右上角语言选择器切换：
+
+![EmbedPinDoctor English workbench](docs/images/workbench-en.png)
 
 ## 功能特性
 
 ### 核心诊断（P0 可信诊断）
+
 - 版本化 JSON Schema 描述芯片和模块数据，支持整包导入校验
 - 数据审计命令区分机器校验与人工签字状态
 - 有界回溯引脚分配算法，保证确定性并优先寻找完整可行方案
@@ -18,12 +33,14 @@ EmbedPinDoctor（引脚医生）是一个本地运行的嵌入式硬件设计辅
 - 风险评分加入置信度权重，未人工签字的数据明确提示
 
 ### 工程扫描（P1 只读扫描）
+
 - 支持 PlatformIO、Arduino、ESP-IDF、STM32CubeMX（.ioc）和 KiCad 工程只读识别
 - 引脚引用记录来源文件、行号、原始片段和置信度
 - 三方差异诊断：扫描结果 vs 手工接线 vs 医生推荐方案
 - Web 工作台展示扫描摘要、来源列表和可复制修复片段
 
 ### 推荐闭环（P2 增强修复）
+
 - 引脚锁定功能，保留必须的接线
 - "最佳质量"和"最小变更"两种分配策略
 - 多路引脚选择理由说明
@@ -31,6 +48,7 @@ EmbedPinDoctor（引脚医生）是一个本地运行的嵌入式硬件设计辅
 - I2C 地址、SPI 模式与频率、UART 硬件流控、PWM 定时器频率专项检查
 
 ### 发布与日常可用性（P3）
+
 - 项目 Schema v1 → v2 自动迁移
 - 原子写入项目文件，保留最多 30 个历史版本
 - 撤销保存 / 重做保存
@@ -41,6 +59,7 @@ EmbedPinDoctor（引脚医生）是一个本地运行的嵌入式硬件设计辅
 - Python 3.11 / 3.12 CI 验证
 
 ### 数据与插件生态（P4）
+
 - 生态包三类：`data`（芯片/模块数据）、`rules`（规则包）、`plugin`（插件）
 - 每个包提供 `manifest.json`，支持语义版本、`min_app_version` 和 SHA-256 校验表
 - 事务式安装 / 覆盖备份 / 安全卸载 / 降级保护
@@ -49,6 +68,7 @@ EmbedPinDoctor（引脚医生）是一个本地运行的嵌入式硬件设计辅
 - Web 工作台内置"扩展包管理"入口
 
 ### 用户界面与入口
+
 - Web 诊断工作台（本地 HTTP 服务）
 - 命令行工具（`app/cli.py`）
 - Windows 一键启动脚本
@@ -86,6 +106,7 @@ python -m app.fastapi_app
 ## 内置芯片与模块
 
 ### 支持的主控芯片
+
 - **STM32F103C8T6**（Cortex-M3，LQFP48）
 - **STM32F401CCU6**（Cortex-M4，UFQFPN48）
 - **ESP32-WROOM-32**（Xtensa LX6 双核，Wi-Fi + BT）
@@ -94,26 +115,27 @@ python -m app.fastapi_app
 - **nRF52840**（Cortex-M4，BLE 5.0）
 
 ### 内置模块库
-| 模块 | 类型 | 主要接口 |
-|------|------|----------|
-| OLED SSD1306 | 显示 | I2C |
-| MPU-6050 | 六轴 IMU | I2C |
-| 按钮（低电平有效） | 输入 | GPIO |
-| 无源蜂鸣器 | 输出 | PWM |
-| SD 卡模块 | 存储 | SPI |
-| WS2812 灯带 | LED | PWM（单线） |
-| 旋转编码器 | 输入 | GPIO x2 + SW |
-| 继电器模块 | 输出 | GPIO（光耦） |
-| TB6612 电机驱动 | 驱动 | PWM x2 + IN4 |
-| LoRaWAN UART 模组 | 通信 | UART |
-| 模拟传感器 | 输入 | ADC |
-| DHT22 温湿度传感器 | 传感器 | GPIO（单总线） |
-| DS18B20 温度传感器 | 传感器 | GPIO（1-Wire） |
-| CAN 收发器 | 通信 | CAN |
-| RS485 模块 | 通信 | UART + GPIO |
-| NEO-6M GPS | 定位 | UART |
-| ESP32-CAM 摄像头 | 视觉 | UART |
-| 自定义测试模块 | 示例 | 混合 |
+
+| 模块               | 类型     | 主要接口       |
+| ------------------ | -------- | -------------- |
+| OLED SSD1306       | 显示     | I2C            |
+| MPU-6050           | 六轴 IMU | I2C            |
+| 按钮（低电平有效） | 输入     | GPIO           |
+| 无源蜂鸣器         | 输出     | PWM            |
+| SD 卡模块          | 存储     | SPI            |
+| WS2812 灯带        | LED      | PWM（单线）    |
+| 旋转编码器         | 输入     | GPIO x2 + SW   |
+| 继电器模块         | 输出     | GPIO（光耦）   |
+| TB6612 电机驱动    | 驱动     | PWM x2 + IN4   |
+| LoRaWAN UART 模组  | 通信     | UART           |
+| 模拟传感器         | 输入     | ADC            |
+| DHT22 温湿度传感器 | 传感器   | GPIO（单总线） |
+| DS18B20 温度传感器 | 传感器   | GPIO（1-Wire） |
+| CAN 收发器         | 通信     | CAN            |
+| RS485 模块         | 通信     | UART + GPIO    |
+| NEO-6M GPS         | 定位     | UART           |
+| ESP32-CAM 摄像头   | 视觉     | UART           |
+| 自定义测试模块     | 示例     | 混合           |
 
 ## 导出格式
 
@@ -207,6 +229,18 @@ EmbedPinDoctor/
 python -m quality.data_audit
 ```
 
+## 测试与代码规范
+
+项目包含核心算法单元测试、真实 HTTP API 集成测试和 Web 静态资源测试。GitHub Actions 会在 Python 3.11/3.12 上执行测试和数据审计，并运行 ESLint 与 Prettier 检查。
+
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
+python -m quality.data_audit
+npm ci
+npm run lint
+npm run format:check
+```
+
 ## Windows 发布构建
 
 ```bash
@@ -237,21 +271,24 @@ python tools/kicad_symbol_to_module.py path/to/library.kicad_sym data/modules/
 
 ## 可视化接口
 
-| 接口 | 说明 |
-|------|------|
-| `GET /api/diagram/svg?chip_id=stm32f103c8t6` | 纯芯片 SVG 引脚图 |
-| `POST /api/export/svg` | 带分配信息 + 风险高亮的 SVG 引脚图 |
-| `POST /api/ioc/import` | 从 `.ioc` 反推已有引脚分配 |
+| 接口                                         | 说明                               |
+| -------------------------------------------- | ---------------------------------- |
+| `GET /api/diagram/svg?chip_id=stm32f103c8t6` | 纯芯片 SVG 引脚图                  |
+| `POST /api/export/svg`                       | 带分配信息 + 风险高亮的 SVG 引脚图 |
+| `POST /api/ioc/import`                       | 从 `.ioc` 反推已有引脚分配         |
 
 ## 扩展开发
 
 ### 新增芯片 / 模块
+
 优先使用 `tools/chip_data_generator.py template` 生成模板后填空。直接手填可参考 `data/chips/stm32f103c8t6.json` 和 `data/modules/oled_i2c.json`，使用 `data/schemas/` 下的 Schema 校验后放入对应目录，或打包为生态包安装。
 
 ### 新增规则包
+
 参考 `rule_packs/demo_pack/`，提供 `manifest.json` 与 `rules/*.json`。
 
 ### 新增插件
+
 参考 `plugins/demo_export_plugin/`，声明 `plugin.json` 和 capability 白名单。
 
 ## 注意事项

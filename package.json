@@ -1,0 +1,17 @@
+{
+  "name": "embed-pin-doctor-web",
+  "version": "0.2.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint web/*.js",
+    "format": "prettier --write web README.md README_EN.md .github/workflows/*.yml",
+    "format:check": "prettier --check web README.md README_EN.md .github/workflows/*.yml"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "eslint": "^9.33.0",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2"
+  }
+}

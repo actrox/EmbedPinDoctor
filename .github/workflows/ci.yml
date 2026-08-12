@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  PYTHONUTF8: "1"
+
 on:
   push:
     branches: [main]
@@ -21,8 +24,21 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Run regression suite
-        run: python run_tests.py
+        run: python -m unittest discover -s tests -p "test_*.py" -v
       - name: Audit hardware data
         run: python -m quality.data_audit
-      - name: Check browser JavaScript syntax
-        run: node --check web/app.js
+      - name: Verify generated demo data
+        run: |
+          python -m tools.build_demo_data
+          npx prettier --write web/generated/demo-data.json
+          git diff --exit-code -- web/generated/demo-data.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install frontend quality tools
+        run: npm ci
+      - name: Lint browser JavaScript
+        run: npm run lint
+      - name: Check formatting
+        run: npm run format:check

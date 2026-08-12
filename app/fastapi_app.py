@@ -51,6 +51,7 @@ from app.schemas import (
     EventReadRequest, KiCadImportRequest, VersionCompareRequest,
     CustomSaveRequest,
 )
+from app.project_service import ProjectService
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,7 @@ APP_VERSION = (PROJECT_ROOT / "VERSION").read_text(encoding="utf-8").strip() if 
 INSTALLED_PLUGIN_DIR = USER_ROOT / "user_plugins"
 INSTALLED_RULE_DIR = USER_ROOT / "user_rule_packs"
 ECOSYSTEM = PackageManager(USER_ROOT / ".ecosystem", USER_DATA_DIR, INSTALLED_RULE_DIR, INSTALLED_PLUGIN_DIR, APP_VERSION)
+PROJECT_SERVICE = ProjectService(DATA_DIR, USER_DATA_DIR)
 
 import re as _re
 
@@ -90,46 +92,14 @@ def _data_file(kind, data_id):
     return user_path if user_path.exists() else DATA_DIR / kind / f"{data_id}.json"
 
 def list_chips(query=""):
-    query = query.lower().strip()
-    chips = []
-    for path in _data_files("chips"):
-        chip = load_chip(path)
-        item = {"id": chip["id"], "name": chip["name"], "voltage": chip.get("voltage", "未知")}
-        if not query or query in item["id"].lower() or query in item["name"].lower():
-            chips.append(item)
-    return chips
+    return PROJECT_SERVICE.list_chips(query)
 
 def list_modules(query=""):
-    query = query.lower().strip()
-    modules = []
-    for path in _data_files("modules"):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        item = {"id": data["id"], "name": data["name"],
-                "voltage": data.get("voltage", "未知"),
-                "description": data.get("description", "")}
-        haystack = f"{item['id']} {item['name']} {item['description']}".lower()
-        if not query or query in haystack:
-            modules.append(item)
-    return modules
+    return PROJECT_SERVICE.list_modules(query)
 
 def build_project(payload_dict):
-    chip_id = payload_dict.get("chip_id") or payload_dict.get("chip")
-    module_ids = payload_dict.get("module_ids") or payload_dict.get("modules") or []
-    allocation_override = payload_dict.get("allocation")
-    if not chip_id:
-        raise ValueError("缺少 chip_id")
-    if not module_ids:
-        raise ValueError("至少选择一个模块")
-    chip = load_chip(_data_file("chips", chip_id))
-    modules = [load_module(_data_file("modules", mid)) for mid in module_ids]
-    allocation = allocation_override or allocate_project(
-        chip, modules,
-        locked_pins=payload_dict.get("locked_pins"),
-        preferred_allocation=payload_dict.get("preferred_allocation"),
-        strategy=payload_dict.get("strategy", "recommended"),
-    )
-    risks = check_project(chip, modules, allocation)
-    return chip, modules, allocation, risks
+    result = PROJECT_SERVICE.build_project(payload_dict)
+    return result["chip"], result["modules"], result["allocation"], result["risks"]
 
 def export_project(payload_dict, kind):
     chip, modules, allocation, risks = build_project(payload_dict)
@@ -239,15 +209,11 @@ def api_diagram_svg(chip_id: str = Query(...)):
 def api_allocate(req: AllocateRequest):
     try:
         d = req.model_dump()
-        chip, modules, allocation, risks = build_project(d)
+        result = PROJECT_SERVICE.build_project(d)
+        chip, modules, allocation, risks = result["chip"], result["modules"], result["allocation"], result["risks"]
         if req.explain_risks:
             risks = explain_risks(risks)
-        alternatives = []
-        if req.include_alternatives:
-            alternatives = allocate_alternatives(chip, modules, req.alternative_count,
-                d.get("locked_pins"), d.get("preferred_allocation"), req.strategy)
-        return {"chip": chip, "modules": modules, "allocation": allocation,
-                "risks": risks, "alternatives": alternatives}
+        return {**result, "risks": risks}
     except Exception as e:
         logger.exception("allocate failed")
         raise HTTPException(400, detail=str(e))
@@ -260,16 +226,11 @@ def api_scan_project(req: ScanProjectRequest):
         requested_chip_id = d.get("chip_id")
         if scan.get("suggested_chip_id") and req.use_detected_chip:
             d["chip_id"] = scan["suggested_chip_id"]
-        chip, modules, allocation, risks = build_project(d)
-        comparison = compare_scan(scan, chip, allocation)
+        result = PROJECT_SERVICE.build_project(d)
+        chip, modules, allocation, risks = result["chip"], result["modules"], result["allocation"], result["risks"]
+        comparison = compare_scan(scan, chip, allocation, d.get("signal_mapping"))
         combined_risks = explain_risks(risks + comparison["risks"])
-        alternatives = []
-        if req.include_alternatives:
-            alternatives = allocate_alternatives(chip, modules, req.alternative_count,
-                d.get("locked_pins"), d.get("preferred_allocation"), req.strategy)
-        return {"chip": chip, "modules": modules, "allocation": allocation,
-                "risks": combined_risks, "scan": scan, "comparison": comparison,
-                "alternatives": alternatives,
+        return {**result, "risks": combined_risks, "scan": scan, "comparison": comparison,
                 "chip_detection": {"requested": requested_chip_id,
                                    "detected": scan.get("suggested_chip_id"),
                                    "used": chip["id"]}}
